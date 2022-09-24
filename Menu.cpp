@@ -40,7 +40,7 @@ void Menu::select(const Point<int>& mouse)
 					item->select = -1;
 				}
 				// ‘I‘ð‚µ‚½“à—e‚ªŽ‚ÂŠÖ”‚ðŽÀs
-				(*item)[buf](item->select);
+				(*item)[buf](item->select, (*item)[buf]);
 			}
 		}
 	}
@@ -57,7 +57,7 @@ void Menu::draw(const Point<int>& mouse)
 		for(int n = 0; n < i->size(); ++n)
 		{
 			display.DrawBox(p.x, p.y + itemSize.y * n, itemSize, 0x3b3b3b, true);
-			display.DrawIcon(p.x, p.y + itemSize.y * n, (*i)[n].Icon());
+			display.DrawIcon(p.x, p.y + itemSize.y * n, (*i)[n].icon);
 			display.DrawBox(p.x, p.y + itemSize.y * n, itemSize, 0x7a7a7a, false);
 		}
 		if(i->select != -1)
@@ -80,8 +80,8 @@ void Menu::draw(const Point<int>& mouse)
 	for(int n = 0; n < i->size(); ++n)
 	{
 		display.DrawBox(p.x, p.y + itemSize.y * n, siz, 0x3b3b3b, true);
-		display.DrawIcon(p.x, p.y + itemSize.y * n, (*i)[n].Icon());
-		display.DrawString(p.x + itemSize.x, p.y + itemSize.y * n, (*i)[n].Text(), 0xffffffff);
+		display.DrawIcon(p.x, p.y + itemSize.y * n, (*i)[n].icon);
+		display.DrawString(p.x + itemSize.x, p.y + itemSize.y * n, (*i)[n].text, 0xffffffff);
 		display.DrawBox(p.x, p.y + itemSize.y * n, siz, 0x7a7a7a, false);
 	}
 	if(m.x >= p.x && m.x < display.siz.x && m.y >= p.y && m.y < p.y + itemSize.y * i->size())

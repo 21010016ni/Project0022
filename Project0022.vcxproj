@@ -144,6 +144,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Battle.cpp" />
+    <ClCompile Include="Canvas.cpp" />
+    <ClCompile Include="Charactor.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="DataBase.cpp" />
     <ClCompile Include="Display.cpp" />
@@ -154,6 +156,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Battle.hpp" />
+    <ClInclude Include="Canvas.hpp" />
+    <ClInclude Include="Charactor.hpp" />
     <ClInclude Include="Config.hpp" />
     <ClInclude Include="DataBase.hpp" />
     <ClInclude Include="Display.hpp" />
@@ -165,6 +169,7 @@
     <ClInclude Include="Point.hpp" />
     <ClInclude Include="Skill.hpp" />
     <ClInclude Include="State.hpp" />
+    <ClInclude Include="Status.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

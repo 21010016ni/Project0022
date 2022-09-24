@@ -16,7 +16,8 @@ void Unit::giveDamage(Unit& t, float m)
 	// 基礎ダメージ計算
 	float v = t.value.atk * m;
 	// 乱数処理
-	v *= std::uniform_real_distribution<float>{t.value.tec, t.value.tec + t.value.luc}(engine);
+	float r = std::uniform_real_distribution<float>{ t.value.tec, t.value.tec + t.value.luc }(engine);
+	v *= r;
 	// 状態異常の処理
 	if (t.hasState(10) != nullptr)
 		v *= 1.3f;
@@ -29,7 +30,7 @@ void Unit::giveDamage(Unit& t, float m)
 	// 反映
 	value.hp += (int)v;
 	// 表示
-	Log::push(Log::Tag::battle, std::format("{} HP {}  ({:+})", base->name, value.hp, (int)v).c_str());
+	Log::push(Log::Tag::battle, std::format("{} HP {}  (<c,{}>{:+}<c>)", base->name, value.hp, (r > 1.2f) ? 0xffffaa : ((v < 0) ? 0xffaaaa : 0xaaffaa), (int)v).c_str());
 }
 
 void Unit::giveState(int slot, State* v, int time)

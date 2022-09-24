@@ -35,6 +35,7 @@ void Display::DrawString(const Point<int>& dst, const std::string& text, unsigne
 }
 void Display::DrawString(const Point<int>& dst, const std::string& text, unsigned int color, int font)const
 {
+	unsigned int c = color;
 	static std::vector<std::string> elem;
 	static std::string buf;
 	size_t tp = 0, prev;
@@ -48,7 +49,7 @@ void Display::DrawString(const Point<int>& dst, const std::string& text, unsigne
 			// 通常表示処理
 			tp = text.find_first_of('<', tp);
 			buf = text.substr(prev, tp - prev);
-			DxLib::DrawStringToHandle(textCursor.x, textCursor.y, buf.c_str(), color, font);
+			DxLib::DrawStringToHandle(textCursor.x, textCursor.y, buf.c_str(), c, font);
 			if(int i = (int)std::count(buf.cbegin(), buf.cend(), '\n'))
 			{
 				textCursor.y += fontSize * i;
@@ -70,7 +71,7 @@ void Display::DrawString(const Point<int>& dst, const std::string& text, unsigne
 				if(elem[0].empty())
 				{
 					// もし処理の値が未設定だったら、<を出力して終了
-					DxLib::DrawStringToHandle(textCursor.x, textCursor.y, "<", color, font);
+					DxLib::DrawStringToHandle(textCursor.x, textCursor.y, "<", c, font);
 					textCursor.x += GetDrawStringWidthToHandle("<", 1, font);
 				}
 				else if(elem[0] == "n")
@@ -84,6 +85,13 @@ void Display::DrawString(const Point<int>& dst, const std::string& text, unsigne
 					// i 指定した番号のアイコンを表示
 					Icon::draw(textCursor, std::stoi(elem.at(1), nullptr, 16));
 					textCursor.x += Icon::get_size();
+				}
+				else if (elem[0] == "c")
+				{
+					if (elem.size() == 1 || elem[1] == "reset")
+						c = color;
+					else
+						c = std::stoi(elem[1], nullptr, 0);
 				}
 			}
 			catch(std::out_of_range)

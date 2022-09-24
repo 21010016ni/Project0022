@@ -16,6 +16,7 @@ class Manager
 public:
 	static inline bool pause = false;
 	static inline int speed = 60;
+	static inline int textline = 0;
 
 	static void CountReset();
 
