@@ -9,9 +9,10 @@ class Manager
 
 	static inline int count = 0;
 
+	static inline int BGMCount = 0;
+
 	static inline std::vector<Charactor> charactor;
 	static inline Battle battle;
-	static Menu menu;
 
 public:
 	static inline bool pause = false;

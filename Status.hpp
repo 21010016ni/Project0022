@@ -7,6 +7,19 @@ class Status
 	// 
 
 public:
+	enum class Name
+	{
+		hp,
+		color,
+		atk,
+		def,
+		mag,
+		reg,
+		spd,
+		tec,
+		luc,
+	};
+
 	Status(int color, int hp, int atk, int def, int mag, int reg, int spd, float tec, float luc)
 		:color(color), hp(hp), atk(atk),def(def),mag(mag),reg(reg),spd(spd),tec(tec),luc(luc)
 	{

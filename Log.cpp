@@ -9,7 +9,7 @@ void Log::draw(size_t start)
 	{
 		if(!mute[text[j].tag])
 		{
-			pos.y -= display.GetFontSize() + 2;
+			pos.y -= 24;
 			display.DrawString(pos, text[j].value, 0xffffffff);
 			if(pos.y < 0)
 				break;

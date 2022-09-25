@@ -144,6 +144,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Battle.cpp" />
+    <ClCompile Include="BGM.cpp" />
     <ClCompile Include="Canvas.cpp" />
     <ClCompile Include="Charactor.cpp" />
     <ClCompile Include="Config.cpp" />
@@ -156,6 +157,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Battle.hpp" />
+    <ClInclude Include="BGM.hpp" />
     <ClInclude Include="Canvas.hpp" />
     <ClInclude Include="Charactor.hpp" />
     <ClInclude Include="Config.hpp" />

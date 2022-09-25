@@ -26,9 +26,6 @@ void Display::DrawString(int x, int y, const std::string& text, unsigned int col
 {
 	DrawString({y,x}, text, color, font);
 }
-
-#define ACTIVATE_EXTENDDRAWSTRING
-#ifdef ACTIVATE_EXTENDDRAWSTRING
 void Display::DrawString(const Point<int>& dst, const std::string& text, unsigned int color) const
 {
 	DrawString(dst, text, color, font);
@@ -102,16 +99,22 @@ void Display::DrawString(const Point<int>& dst, const std::string& text, unsigne
 	}
 }
 
-#else
-void Display::DrawString(const Point<int>& dst, const std::string& text, unsigned int color) const
+void Display::DrawRawString(const Point<int>& dst, const std::string& text, unsigned int color) const
 {
 	DxLib::DrawStringToHandle(pos.x + dst.x, pos.y + dst.y, text.c_str(), color, font);
 }
-void Display::DrawString(const Point<int>& dst, const std::string& text, unsigned int color, int font) const
+void Display::DrawRawString(int x,int y, const std::string& text, unsigned int color) const
+{
+	DxLib::DrawStringToHandle(pos.x + x, pos.y + y, text.c_str(), color, font);
+}
+void Display::DrawRawString(const Point<int>& dst, const std::string& text, unsigned int color, int font) const
 {
 	DxLib::DrawStringToHandle(pos.x + dst.x, pos.y + dst.y, text.c_str(), color, font);
+}
+void Display::DrawRawString(int x,int y, const std::string& text, unsigned int color, int font) const
+{
+	DxLib::DrawStringToHandle(pos.x + x, pos.y + y, text.c_str(), color, font);
 }
 
-#endif // ACTIVATE_EXTENDDRAWSTRING
 
 

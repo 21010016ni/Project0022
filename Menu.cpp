@@ -1,5 +1,10 @@
 #include "Menu.hpp"
 
+Display Menu::display({0,0}, {400,384});
+
+Point<int> Menu::itemSize(24, 24);
+Menu::Item Menu::root(-1, "");
+
 void Menu::select(const Point<int>& mouse)
 {
 	auto m = display.localize(mouse);
@@ -81,7 +86,7 @@ void Menu::draw(const Point<int>& mouse)
 	{
 		display.DrawBox(p.x, p.y + itemSize.y * n, siz, 0x3b3b3b, true);
 		display.DrawIcon(p.x, p.y + itemSize.y * n, (*i)[n].icon);
-		display.DrawString(p.x + itemSize.x, p.y + itemSize.y * n, (*i)[n].text, 0xffffffff);
+		display.DrawRawString(p.x + itemSize.x, p.y + itemSize.y * n + 2, (*i)[n].text, 0xffffffff);
 		display.DrawBox(p.x, p.y + itemSize.y * n, siz, 0x7a7a7a, false);
 	}
 	if(m.x >= p.x && m.x < display.siz.x && m.y >= p.y && m.y < p.y + itemSize.y * i->size())

@@ -25,8 +25,10 @@ public:
 		debug,
 	};
 
-	static inline size_t maxNum = 128, drawNum = 32;
+	static inline int maxNum = 128, drawNum = 32;
 	static inline std::map<unsigned int,bool> mute;
+
+	Log() = delete;
 
 	static bool hit(const Point<int>& t)
 	{

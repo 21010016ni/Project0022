@@ -3,6 +3,7 @@
 
 class Canvas
 {
-    static Display display;
+	int back;
+	Display display;
 };
 

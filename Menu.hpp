@@ -51,31 +51,26 @@ public:
 	};
 
 private:
-	Point<int> itemSize;
+	static Point<int> itemSize;
 
-	Display display;
+	static Display display;
 
 public:
-	Item root;
+	static Item root;
 
-	Menu(const Point<int>& pos, const Point<int>& siz, const Point<int>& itemSize) :root(-1, ""), itemSize(itemSize), display(pos, siz)
-	{
-	}
+	Menu() = delete;
 
-	Menu(const Point<int>& pos, const Point<int>& siz, const Point<int>& itemSize, int font) :root(-1, ""), itemSize(itemSize), display(pos, siz, font)
-	{
-	}
-	bool hit(const Point<int>& t)const
+	static bool hit(const Point<int>& t)
 	{
 		return display.hit(t);
 	}
-
-	void SetFont(int font)
+	
+	static void SetFont(int font)
 	{
 		display.SetFont(font);
 	}
 
-	void select(const Point<int>& mouse);
-	void draw(const Point<int>& mouse);
+	static void select(const Point<int>& mouse);
+	static void draw(const Point<int>& mouse);
 };
 

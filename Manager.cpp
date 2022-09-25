@@ -3,9 +3,8 @@
 #include "Icon.hpp"
 #include "Log.hpp"
 #include "DataBase.hpp"
+#include "BGM.hpp"
 #include "Input.hpp"
-
-Menu Manager::menu({ 0,0 }, { 400,384 }, { 24,24 });
 
 void Manager::CountReset()
 {
@@ -14,10 +13,16 @@ void Manager::CountReset()
 
 void Manager::preset()
 {
-	font = LoadFontDataToHandle("data/font/TTEdit2_3ゴシック_24_0.dft");
-	Log::SetFont(font);
-	menu.SetFont(font);
+	font = LoadFontDataToHandle("data/font/TTEdit2_3ゴシック.dft");
 	Icon::load("data/picture/icon.png", 16);
+	Log::SetFont(font);
+	Menu::SetFont(font);
+	BGM::set("data/bgm/Changeling.mp3");
+	BGM::set("data/bgm/Etude.mp3");
+	BGM::set("data/bgm/なんだか明るい感じのワルツ.wav");
+	BGM::set("data/bgm/夢.mp3");
+	BGM::set("data/bgm/宝石と想いを胸に.mp3");
+	BGM::set("data/bgm/自然.mp3");
 
 	// Charactor(name,color,hp,atk,def,mag,reg,spd,tec,luc)
 	charactor.emplace_back("テスト1", 0xffffffff, 30, 5, 0, 0, 0, 10, 0.8f, 0.5f);
@@ -33,51 +38,61 @@ void Manager::preset()
 	battle.set(charactor[1], Unit::Faction::player);
 	battle.set(charactor[2], Unit::Faction::enemy);
 
-	menu.root.emplace_back(0x5e5, "操作");
-	menu.root.back().emplace_back(0x621, "パレット云々");
-	menu.root.back().emplace_back(0x621, "戦闘スピード");
-	menu.root.back().emplace_back(0x338, "戦闘進行", [](int, Menu::Item& i) {Manager::pause ^= true; Manager::CountReset(); if (Manager::pause) { i.icon = 0x350; } else { i.icon = 0x338; }});
-	menu.root.emplace_back(0x5f7, "実績");
-	menu.root.back().emplace_back(0x624, "いろいろ");
-	menu.root.emplace_back(0x5f4, "設定");
-	menu.root.back().emplace_back(0x628, "ログ表示");
-	menu.root.back().back().emplace_back(0x320, "戦闘", [](int, Menu::Item& i) {Log::mute[Log::Tag::battle] ^= true; if (Log::mute[Log::Tag::battle]) { i.icon = 0x32a; } else { i.icon = 0x320; }});
-	menu.root.back().back().emplace_back(0x320, "システム", [](int, Menu::Item& i) {Log::mute[Log::Tag::system] ^= true; if (Log::mute[Log::Tag::system]) { i.icon = 0x32a; } else { i.icon = 0x320; }});
-	menu.root.back().back().emplace_back(0x320, "会話", [](int, Menu::Item& i) {Log::mute[Log::Tag::talk] ^= true; if (Log::mute[Log::Tag::talk]) { i.icon = 0x32a; } else { i.icon = 0x320; }});
-	menu.root.back().back().emplace_back(0x320, "デバッグ", [](int, Menu::Item& i) {Log::mute[Log::Tag::debug] ^= true; if (Log::mute[Log::Tag::debug]) { i.icon = 0x32a; } else { i.icon = 0x320; }});
-	menu.root.back().emplace_back(0x629, "自動セーブ");
+	Menu::root.emplace_back(0x5e5, "操作");
+	Menu::root.back().emplace_back(0x621, "パレット云々");
+	Menu::root.back().emplace_back(0x621, "戦闘スピード");
+	Menu::root.back().emplace_back(0x338, "戦闘進行", [](int, Menu::Item& i) { Manager::pause ^= true; Manager::CountReset(); if(Manager::pause) { i.icon = 0x350; } else { i.icon = 0x338; } });
+	Menu::root.emplace_back(0x5f7, "実績");
+	Menu::root.back().emplace_back(0x624, "いろいろ");
+	Menu::root.emplace_back(0x5f4, "設定");
+	Menu::root.back().emplace_back(0x628, "ログ表示");
+	Menu::root.back().back().emplace_back(0x320, "戦闘", [](int, Menu::Item& i) { Log::mute[Log::Tag::battle] ^= true; if(Log::mute[Log::Tag::battle]) { i.icon = 0x32a; } else { i.icon = 0x320; } });
+	Menu::root.back().back().emplace_back(0x320, "システム", [](int, Menu::Item& i) { Log::mute[Log::Tag::system] ^= true; if(Log::mute[Log::Tag::system]) { i.icon = 0x32a; } else { i.icon = 0x320; } });
+	Menu::root.back().back().emplace_back(0x320, "会話", [](int, Menu::Item& i) { Log::mute[Log::Tag::talk] ^= true; if(Log::mute[Log::Tag::talk]) { i.icon = 0x32a; } else { i.icon = 0x320; } });
+	Menu::root.back().back().emplace_back(0x320, "デバッグ", [](int, Menu::Item& i) { Log::mute[Log::Tag::debug] ^= true; if(Log::mute[Log::Tag::debug]) { i.icon = 0x32a; } else { i.icon = 0x320; } });
+	Menu::root.back().emplace_back(0x629, "自動セーブ");
 }
 
 void Manager::update()
 {
-	if (!pause && ++count >= speed)
+	if(!pause && ++count >= speed)
 	{
 		count = 0;
 		battle.update();
 	}
-	if (Mouse::click(MOUSE_INPUT_1))
+	if(Mouse::click(MOUSE_INPUT_1))
 	{
-		if (Log::hit(Mouse::pos()))
+		if(Log::hit(Mouse::pos()))
 		{
 			textline = 0;
 		}
-		if (menu.hit(Mouse::pos()))
+		if(Menu::hit(Mouse::pos()))
 		{
-			menu.select(Mouse::pos());
+			Menu::select(Mouse::pos());
 		}
 	}
-	if (Mouse::wheel() != 0)
+	if(Mouse::wheel() != 0)
 	{
-		if (Log::hit(Mouse::pos()))
+		if(Log::hit(Mouse::pos()))
 		{
 			textline = __max(__min(textline - Mouse::wheel(), Log::maxNum), 0);
 		}
+	}
+	if(BGM::update())
+	{
+		BGMCount = 600;
 	}
 }
 
 void Manager::draw()
 {
 	Log::draw(textline);
-	menu.draw(Mouse::pos());
+	Menu::draw(Mouse::pos());
+	if(BGMCount -= 2 > 0)
+	{
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, BGMCount);
+		DrawStringToHandle(1020 - GetDrawStringWidthToHandle(BGM::title.c_str(), (int)BGM::title.size(), font), 4, BGM::title.c_str(), 0xfffffff, font);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	}
 }
 
