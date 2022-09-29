@@ -26,9 +26,16 @@ bool BGM::update()
 			}
 		}
 		PlayMusic(stack.top()->c_str(), DX_PLAYTYPE_BACK);
+		SetVolumeMusic(volume);
 		title = "ô" + stack.top()->substr(0, stack.top()->find_last_of('.')).substr(stack.top()->find_last_of("/\\") + 1);
 		return true;
 	}
 	return false;
+}
+
+void BGM::ChangeVolume(unsigned char v)
+{
+	SetVolumeMusic(v);
+	volume = v;
 }
 

@@ -15,8 +15,10 @@ class BGM
 
 public:
 	static inline std::string title;
+	static inline unsigned char volume = 255;
 
 	static void set(const char* file);
 	static bool update();
+	static void ChangeVolume(unsigned char v);
 };
 

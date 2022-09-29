@@ -116,5 +116,3 @@ void Display::DrawRawString(int x,int y, const std::string& text, unsigned int c
 	DxLib::DrawStringToHandle(pos.x + x, pos.y + y, text.c_str(), color, font);
 }
 
-
-

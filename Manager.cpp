@@ -5,6 +5,7 @@
 #include "DataBase.hpp"
 #include "BGM.hpp"
 #include "Input.hpp"
+#include "Effect.hpp"
 
 void Manager::CountReset()
 {
@@ -51,6 +52,14 @@ void Manager::preset()
 	Menu::root.back().back().emplace_back(0x320, "会話", [](int, Menu::Item& i) { Log::mute[Log::Tag::talk] ^= true; if(Log::mute[Log::Tag::talk]) { i.icon = 0x32a; } else { i.icon = 0x320; } });
 	Menu::root.back().back().emplace_back(0x320, "デバッグ", [](int, Menu::Item& i) { Log::mute[Log::Tag::debug] ^= true; if(Log::mute[Log::Tag::debug]) { i.icon = 0x32a; } else { i.icon = 0x320; } });
 	Menu::root.back().emplace_back(0x629, "自動セーブ");
+	
+	Effect::load(LoadGraph("data/effect/pipo-btleffect001.png"), 5, 1, LoadSoundMem("data/se/刀剣・斬る01.mp3"));
+
+	volume.bgm = 64;
+	volume.se = 64;
+
+	BGM::volume = (volume.Bgm()) ? volume.bgm : 0;
+	Effect::volume = (volume.Se()) ? volume.se : 0;
 }
 
 void Manager::update()
@@ -70,6 +79,7 @@ void Manager::update()
 		{
 			Menu::select(Mouse::pos());
 		}
+		Effect::set(0, 200, 0, Effect::Pos::leftup);
 	}
 	if(Mouse::wheel() != 0)
 	{
@@ -88,11 +98,13 @@ void Manager::draw()
 {
 	Log::draw(textline);
 	Menu::draw(Mouse::pos());
-	if(BGMCount -= 2 > 0)
+	Effect::play();
+	if(BGMCount > 0)
 	{
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, BGMCount);
 		DrawStringToHandle(1020 - GetDrawStringWidthToHandle(BGM::title.c_str(), (int)BGM::title.size(), font), 4, BGM::title.c_str(), 0xfffffff, font);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		BGMCount -= 2;
 	}
 }
 
