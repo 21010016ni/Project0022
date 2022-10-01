@@ -30,7 +30,7 @@ int Application::Main(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	//---------------------------------------------------------------->>
 	// タイトル表示
-	SetMainWindowText(std::format("{}  v_{:4.2f}", Title, Ver).c_str());
+	SetMainWindowText(std::format("{}  α{:4.2f}", Title, Ver).c_str());
 	while (!ProcessMessage())
 	{
 		// FPS制御.現在カウント取得

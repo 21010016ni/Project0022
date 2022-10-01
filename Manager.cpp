@@ -82,7 +82,6 @@ void Manager::update()
 		{
 			Menu::select(Mouse::pos());
 		}
-		Effect::set(0, Mouse::x(), Mouse::y(), Effect::Pos::center);
 	}
 	if(Mouse::wheel() != 0)
 	{
