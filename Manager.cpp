@@ -18,12 +18,12 @@ void Manager::preset()
 	Icon::load("data/picture/icon.png", 16);
 	Log::SetFont(font);
 	Menu::SetFont(font);
-	BGM::set("data/bgm/Changeling.mp3");
-	BGM::set("data/bgm/Etude.mp3");
-	BGM::set("data/bgm/なんだか明るい感じのワルツ.wav");
-	BGM::set("data/bgm/夢.mp3");
-	BGM::set("data/bgm/宝石と想いを胸に.mp3");
-	BGM::set("data/bgm/自然.mp3");
+	//BGM::set("data/bgm/Changeling.mp3");
+	//BGM::set("data/bgm/Etude.mp3");
+	//BGM::set("data/bgm/なんだか明るい感じのワルツ.wav");
+	//BGM::set("data/bgm/夢.mp3");
+	//BGM::set("data/bgm/宝石と想いを胸に.mp3");
+	//BGM::set("data/bgm/自然.mp3");
 
 	// Charactor(name,color,hp,atk,def,mag,reg,spd,tec,luc)
 	charactor.emplace_back("テスト1", 0xffffffff, 30, 5, 0, 0, 0, 10, 0.8f, 0.5f);
@@ -64,11 +64,14 @@ void Manager::preset()
 
 void Manager::update()
 {
+	// 戦闘進行
 	if(!pause && ++count >= speed)
 	{
 		count = 0;
 		battle.update();
 	}
+
+	// 入力受付
 	if(Mouse::click(MOUSE_INPUT_1))
 	{
 		if(Log::hit(Mouse::pos()))
@@ -79,7 +82,7 @@ void Manager::update()
 		{
 			Menu::select(Mouse::pos());
 		}
-		Effect::set(0, 200, 0, Effect::Pos::leftup);
+		Effect::set(0, Mouse::x(), Mouse::y(), Effect::Pos::center);
 	}
 	if(Mouse::wheel() != 0)
 	{
@@ -88,6 +91,8 @@ void Manager::update()
 			textline = __max(__min(textline - Mouse::wheel(), Log::maxNum), 0);
 		}
 	}
+
+	// BGM更新処理
 	if(BGM::update())
 	{
 		BGMCount = 600;

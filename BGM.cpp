@@ -13,7 +13,7 @@ void BGM::set(const char* file)
 
 bool BGM::update()
 {
-	if(CheckMusic() == 0)
+	if(!music.empty()&&CheckMusic() == 0)
 	{
 		if(!stack.empty())
 			stack.pop();
