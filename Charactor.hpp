@@ -46,10 +46,10 @@ public:
 	int cool;
 	StateSlot state[4];
 
-	Unit(Charactor& charactor, Faction faction) :base(&charactor), faction(faction), value(charactor.status), cool(1){}
+	Unit(Charactor& charactor, Faction faction) :base(&charactor), faction(faction), value(charactor.status), cool(0){}
 
 	StateSlot* hasState(int id);
-	void giveDamage(Unit& t, float m);
+	void giveDamage(Unit& t, float m, char type);
 	void giveState(int slot, State* v, int time);
 };
 

@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <format>
 #include "Log.hpp"
+#include "Canvas.hpp"
 
 std::mt19937 random(std::random_device{}());
 
@@ -22,7 +23,6 @@ std::vector<std::weak_ptr<Unit>>& Battle::ShuffledUnit()
 void Battle::update()
 {
 	static int turn = 0;
-	//std::cout << ++turn << "ターン目" << std::endl;
 	Log::push(Log::Tag::battle, std::format("{}ターン目", ++turn).c_str());
 	target.clear();
 	auto move = ShuffledUnit();
@@ -47,26 +47,23 @@ void Battle::update()
 		}
 
 		// ステータス表示
-		//std::cout << buf->base->name << std::endl << "HP : " << buf->value.hp << std::endl;
 		Log::push(Log::Tag::battle, std::format("{} HP : {}", buf->base->name, buf->value.hp).c_str());
 
 		// スキル発動
-		if(--buf->cool <= 0)
+		if ((buf->cool -= buf->value.spd) <= 0)
 		{
-			//std::cout << buf->base->name << "の行動" << std::endl;
+			buf->cool = 0;
 			Log::push(Log::Tag::battle, std::format("{}の行動", buf->base->name).c_str());
 			unsigned char n = 0;
 			for(size_t j = 0; j < buf->base->skill.size() && n < 255; ++n)
 			{
-				//std::cout << "<" << buf->base->skill[j].Name() << ">！" << std::endl;
 				Log::push(Log::Tag::battle, std::format("《{}》！", buf->base->skill[j].Name()).c_str());
 				buf->cool += buf->base->skill[j](*buf, *this, j);
 			}
-			//std::cout << (int)n << "回行動した　CT" << buf->cool << std::endl << std::endl;
+			Canvas::PlayEffect(0);
 			Log::push(Log::Tag::battle, std::format("{}回行動した　CT", (int)n, buf->cool).c_str());
 		}
 	}
-	//std::cout << "ターン終了" << std::endl << std::endl;
 	Log::push(Log::Tag::battle, "ターン終了");
 	Log::push(Log::Tag::battle, "");
 }

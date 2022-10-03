@@ -51,9 +51,10 @@ public:
 	};
 
 private:
-	static Point<int> itemSize;
-
 	static Display display;
+
+	static Point<int> itemSize;
+	static inline int se[2] = { -1,-1 };
 
 public:
 	static Item root;
@@ -69,6 +70,12 @@ public:
 	{
 		display.SetFont(font);
 	}
+	static void SetSE(int select, int decision)
+	{
+		se[0] = select;
+		se[1] = decision;
+	}
+	static void SetSEVolume(unsigned char v);
 
 	static void select(const Point<int>& mouse);
 	static void draw(const Point<int>& mouse);

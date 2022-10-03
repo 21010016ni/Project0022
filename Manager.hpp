@@ -13,8 +13,8 @@ class Manager
 		unsigned char mute;
 		Volume() :master(1.0f), bgm(255), se(255), mute(0xff) {}
 		bool Master() { return mute & 0x01; }
-		bool Bgm() { return mute & 0x02; }
-		bool Se() { return mute & 0x04; }
+		bool Bgm() { return mute & 0x01 && mute & 0x02; }
+		bool Se() { return mute & 0x01 && mute & 0x04; }
 	};
 
 	static inline int font;

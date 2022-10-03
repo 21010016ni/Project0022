@@ -6,6 +6,7 @@
 #include "BGM.hpp"
 #include "Input.hpp"
 #include "Effect.hpp"
+#include "Canvas.hpp"
 
 void Manager::CountReset()
 {
@@ -18,6 +19,8 @@ void Manager::preset()
 	Icon::load("data/picture/icon.png", 16);
 	Log::SetFont(font);
 	Menu::SetFont(font);
+	Menu::SetSE(LoadSoundMem("data/se/select.mp3"), LoadSoundMem("data/se/decision.mp3"));
+	Canvas::back = LoadGraph("data/picture/back00.jpg");
 	//BGM::set("data/bgm/Changeling.mp3");
 	//BGM::set("data/bgm/Etude.mp3");
 	//BGM::set("data/bgm/なんだか明るい感じのワルツ.wav");
@@ -26,7 +29,7 @@ void Manager::preset()
 	//BGM::set("data/bgm/自然.mp3");
 
 	// Charactor(name,color,hp,atk,def,mag,reg,spd,tec,luc)
-	charactor.emplace_back("テスト1", 0xffffffff, 30, 5, 0, 0, 0, 10, 0.8f, 0.5f);
+	charactor.emplace_back("テスト1", 0xffffffff, 300, 20, 10, 20, 0, 10, 0.8f, 0.5f);
 	charactor.back().skill.push_back(DataBase::skill[4]);
 	charactor.emplace_back("テスト2", 0xffffffff, 300, 8, 0, 0, 0, 10, 0.8f, 0.5f);
 	charactor.back().skill.push_back(DataBase::skill[3]);
@@ -55,11 +58,11 @@ void Manager::preset()
 	
 	Effect::load(LoadGraph("data/effect/pipo-btleffect001.png"), 5, 1, LoadSoundMem("data/se/刀剣・斬る01.mp3"));
 
-	volume.bgm = 64;
-	volume.se = 64;
+	volume.mute &= 0b11111110;
 
-	BGM::volume = (volume.Bgm()) ? volume.bgm : 0;
-	Effect::volume = (volume.Se()) ? volume.se : 0;
+	BGM::volume = volume.Bgm() ? volume.bgm : 0;
+	Effect::volume = volume.Se() ? volume.se : 0;
+	Menu::SetSEVolume(volume.Se() ? volume.se : 0);
 }
 
 void Manager::update()
@@ -87,7 +90,7 @@ void Manager::update()
 	{
 		if(Log::hit(Mouse::pos()))
 		{
-			textline = __max(__min(textline - Mouse::wheel(), Log::maxNum), 0);
+			textline = __max(__min(textline + Mouse::wheel(), Log::maxNum), 0);
 		}
 	}
 
@@ -102,6 +105,7 @@ void Manager::draw()
 {
 	Log::draw(textline);
 	Menu::draw(Mouse::pos());
+	Canvas::draw();
 	Effect::play();
 	if(BGMCount > 0)
 	{

@@ -5,6 +5,12 @@ Display Menu::display({0,0}, {400,384});
 Point<int> Menu::itemSize(24, 24);
 Menu::Item Menu::root(-1, "");
 
+void Menu::SetSEVolume(unsigned char v)
+{
+	ChangeVolumeSoundMem(v, se[0]);
+	ChangeVolumeSoundMem(v, se[1]);
+}
+
 void Menu::select(const Point<int>& mouse)
 {
 	auto m = display.localize(mouse);
@@ -44,6 +50,10 @@ void Menu::select(const Point<int>& mouse)
 					// 現在位置の選択を解除
 					item->select = -1;
 				}
+				
+				// 決定SE再生
+				PlaySoundMem(se[1], DX_PLAYTYPE_BACK);
+
 				// 選択した内容が持つ関数を実行
 				(*item)[buf](item->select, (*item)[buf]);
 			}
@@ -54,9 +64,13 @@ void Menu::select(const Point<int>& mouse)
 void Menu::draw(const Point<int>& mouse)
 {
 	auto m = display.localize(mouse);
+	bool highlight = false;
+	static Point<int> prev(-1, -1);
+	Point<int> now(-1, (m.x >= 0 && m.x < display.siz.x) ? m.x / itemSize.x : -1);
 
 	Point<int> p(display.siz.y, 0);
 	auto i = &root;
+	int level = 0;
 	while((p.y = __min(p.y, display.siz.y - itemSize.y * i->size())), *i)
 	{
 		for(int n = 0; n < i->size(); ++n)
@@ -71,15 +85,29 @@ void Menu::draw(const Point<int>& mouse)
 			display.DrawBox(p.x, p.y + itemSize.y * i->select, itemSize, 0xffffffff, true);
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		}
-		if(m.x >= p.x && m.x < p.x + itemSize.x && m.y >= p.y && m.y < p.y + itemSize.y * i->size())
+		if (!highlight && now.x == level)
 		{
-			SetDrawBlendMode(DX_BLENDMODE_ADD, 63);
-			display.DrawBox(p.x, p.y + itemSize.y * ((m.y - p.y) / itemSize.y), itemSize, 0xffffffff, true);
-			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+			highlight = true;
+			if (m.y >= p.y && m.y < p.y + itemSize.y * i->size())
+			{
+				now.y = (m.y - p.y) / itemSize.y;
+				if (now != prev)
+				{
+					PlaySoundMem(se[0], DX_PLAYTYPE_BACK);
+				}
+				SetDrawBlendMode(DX_BLENDMODE_ADD, 63);
+				display.DrawBox(p.x, p.y + itemSize.y * now.y, itemSize, 0xffffffff, true);
+				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+			}
+			else
+			{
+				now.y = -1;
+			}
 		}
 		p.y += itemSize.y * i->select;
 		p.x += itemSize.x;
 		i = &(*i)[i->select];
+		++level;
 	}
 	Point<int> siz = {itemSize.y,display.siz.x - p.x};
 	for(int n = 0; n < i->size(); ++n)
@@ -89,11 +117,25 @@ void Menu::draw(const Point<int>& mouse)
 		display.DrawRawString(p.x + itemSize.x, p.y + itemSize.y * n + 2, (*i)[n].text, 0xffffffff);
 		display.DrawBox(p.x, p.y + itemSize.y * n, siz, 0x7a7a7a, false);
 	}
-	if(m.x >= p.x && m.x < display.siz.x && m.y >= p.y && m.y < p.y + itemSize.y * i->size())
+	if(!highlight && now.x >= level)
 	{
-		SetDrawBlendMode(DX_BLENDMODE_ADD, 63);
-		display.DrawBox(p.x, p.y + itemSize.y * ((m.y - p.y) / itemSize.y), siz, 0xffffffff, true);
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		now.x = level;
+		if(m.y >= p.y && m.y < p.y + itemSize.y * i->size())
+		{
+			now.y = (m.y - p.y) / itemSize.y;
+			if (now != prev)
+			{
+				PlaySoundMem(se[0], DX_PLAYTYPE_BACK);
+			}
+			SetDrawBlendMode(DX_BLENDMODE_ADD, 63);
+			display.DrawBox(p.x, p.y + itemSize.y * now.y, siz, 0xffffffff, true);
+			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		}
+		else
+		{
+			now.y = -1;
+		}
 	}
+	prev = now;
 }
 

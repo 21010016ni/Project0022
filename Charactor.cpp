@@ -11,10 +11,28 @@ Unit::StateSlot* Unit::hasState(int id)
 	return nullptr;
 }
 
-void Unit::giveDamage(Unit& t, float m)
+void Unit::giveDamage(Unit& t, float m, char type)
 {
 	// 基礎ダメージ計算
-	float v = t.value.atk * m;
+	float v = 0.0f;
+	switch (type)
+	{
+	case 0:	// 任意（物理・魔法のうち高いほう*倍率）
+		v = __max(t.value.atk, t.value.mag) * m;
+		break;
+	case 1:	// 物理（物理攻撃力*倍率）
+		v = t.value.atk * m;
+		break;
+	case 2:	// 魔術（魔法攻撃力*倍率）
+		v = t.value.mag * m;
+		break;
+	case 3:	// 物魔（物理攻撃力*魔法攻撃力*倍率/2、防御力をある程度無視）
+		v = (t.value.atk + t.value.mag) * m / 2;
+		break;
+	case 4:	// 割合（受ける側の現在HPの割合）
+		v = value.hp * m;
+		break;
+	}
 	// 乱数処理
 	float r = std::uniform_real_distribution<float>{ t.value.tec, t.value.tec + t.value.luc }(engine);
 	v *= r;
@@ -23,7 +41,14 @@ void Unit::giveDamage(Unit& t, float m)
 		v *= 1.3f;
 
 	// 防御力処理
-	v -= value.def;
+	switch (type)
+	{
+	case 2:
+		v -= value.def / ((t.value.atk + t.value.mag) / 4);
+		break;
+	default:
+		v -= value.def;
+	}
 	if (m > 0)
 		v = __max(v, 0);
 
