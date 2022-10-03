@@ -50,7 +50,7 @@ void Battle::update()
 		Log::push(Log::Tag::battle, std::format("{} HP : {}", buf->base->name, buf->value.hp).c_str());
 
 		// ƒXƒLƒ‹”­“®
-		if ((buf->cool -= buf->value.spd) <= 0)
+		if((buf->cool -= buf->value.spd) <= 0)
 		{
 			buf->cool = 0;
 			Log::push(Log::Tag::battle, std::format("{}‚Ìs“®", buf->base->name).c_str());

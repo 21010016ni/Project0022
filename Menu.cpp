@@ -50,7 +50,7 @@ void Menu::select(const Point<int>& mouse)
 					// åªç›à íuÇÃëIëÇâèú
 					item->select = -1;
 				}
-				
+
 				// åàíËSEçƒê∂
 				PlaySoundMem(se[1], DX_PLAYTYPE_BACK);
 
@@ -85,13 +85,13 @@ void Menu::draw(const Point<int>& mouse)
 			display.DrawBox(p.x, p.y + itemSize.y * i->select, itemSize, 0xffffffff, true);
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		}
-		if (!highlight && now.x == level)
+		if(!highlight && now.x == level)
 		{
 			highlight = true;
-			if (m.y >= p.y && m.y < p.y + itemSize.y * i->size())
+			if(m.y >= p.y && m.y < p.y + itemSize.y * i->size())
 			{
 				now.y = (m.y - p.y) / itemSize.y;
-				if (now != prev)
+				if(now != prev)
 				{
 					PlaySoundMem(se[0], DX_PLAYTYPE_BACK);
 				}
@@ -123,7 +123,7 @@ void Menu::draw(const Point<int>& mouse)
 		if(m.y >= p.y && m.y < p.y + itemSize.y * i->size())
 		{
 			now.y = (m.y - p.y) / itemSize.y;
-			if (now != prev)
+			if(now != prev)
 			{
 				PlaySoundMem(se[0], DX_PLAYTYPE_BACK);
 			}

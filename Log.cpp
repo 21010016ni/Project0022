@@ -1,6 +1,6 @@
 #include "Log.hpp"
 
-Display Log::display({ 0,384 }, { 600,640 });
+Display Log::display({0,384}, {600,640});
 
 void Log::draw(size_t start)
 {

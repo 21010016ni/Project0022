@@ -55,7 +55,7 @@ void Manager::preset()
 	Menu::root.back().back().emplace_back(0x320, "会話", [](int, Menu::Item& i) { Log::mute[Log::Tag::talk] ^= true; if(Log::mute[Log::Tag::talk]) { i.icon = 0x32a; } else { i.icon = 0x320; } });
 	Menu::root.back().back().emplace_back(0x320, "デバッグ", [](int, Menu::Item& i) { Log::mute[Log::Tag::debug] ^= true; if(Log::mute[Log::Tag::debug]) { i.icon = 0x32a; } else { i.icon = 0x320; } });
 	Menu::root.back().emplace_back(0x629, "自動セーブ");
-	
+
 	Effect::load(LoadGraph("data/effect/pipo-btleffect001.png"), 5, 1, LoadSoundMem("data/se/刀剣・斬る01.mp3"));
 
 	volume.mute &= 0b11111110;

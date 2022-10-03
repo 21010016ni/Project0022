@@ -4,7 +4,7 @@
 #include "Input.hpp"
 #include "Manager.hpp"
 
-Point<int> Application::WindowSize = { 600,1024 };
+Point<int> Application::WindowSize = {600,1024};
 int Application::WindowColorBit = 32;
 const char* Application::Title = "Chromatic Cult";
 const float Application::Ver = 0.00f;
@@ -22,7 +22,7 @@ int Application::Main(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	//---------------------------------------------------------------->>
 	// 初期化
-	if (DxLib_Init() == -1) return -1;
+	if(DxLib_Init() == -1) return -1;
 	SetDrawScreen(DX_SCREEN_BACK);
 	// 初期化ブロック
 	//----------------------------------------------------------------<<
@@ -31,7 +31,7 @@ int Application::Main(HINSTANCE, HINSTANCE, LPSTR, int)
 	//---------------------------------------------------------------->>
 	// タイトル表示
 	SetMainWindowText(std::format("{}  α{:4.2f}", Title, Ver).c_str());
-	while (!ProcessMessage())
+	while(!ProcessMessage())
 	{
 		// FPS制御.現在カウント取得
 		Count = GetNowHiPerformanceCount();
@@ -43,9 +43,9 @@ int Application::Main(HINSTANCE, HINSTANCE, LPSTR, int)
 		Manager::update();
 
 		// スクリーンショット
-		if (Keyboard::push(KEY_INPUT_F7))
-			SaveDrawScreen(0, 0, WindowSize.x, WindowSize.y, std::format("ScreenShot_{:%m%d%H%M%OS}.jpg", std::chrono::zoned_time{ std::chrono::current_zone(), std::chrono::system_clock::now() }).c_str(), DX_IMAGESAVETYPE_JPEG);
-		if (Keyboard::push(KEY_INPUT_F9))
+		if(Keyboard::push(KEY_INPUT_F7))
+			SaveDrawScreen(0, 0, WindowSize.x, WindowSize.y, std::format("ScreenShot_{:%m%d%H%M%OS}.jpg", std::chrono::zoned_time{std::chrono::current_zone(), std::chrono::system_clock::now()}).c_str(), DX_IMAGESAVETYPE_JPEG);
+		if(Keyboard::push(KEY_INPUT_F9))
 			break;
 
 		//---------------------------------------------------------------->>
@@ -60,7 +60,7 @@ int Application::Main(HINSTANCE, HINSTANCE, LPSTR, int)
 		// 画面表示
 		ScreenFlip();
 		// FPS制御.ウェイト追加
-		while (GetNowHiPerformanceCount() - Count < WaitValue);
+		while(GetNowHiPerformanceCount() - Count < WaitValue);
 	}
 	// 終了処理
 	SetMainWindowText("Process Quitting...");

@@ -83,9 +83,9 @@ void Display::DrawString(const Point<int>& dst, const std::string& text, unsigne
 					Icon::draw(textCursor, std::stoi(elem.at(1), nullptr, 16));
 					textCursor.x += Icon::get_size();
 				}
-				else if (elem[0] == "c")
+				else if(elem[0] == "c")
 				{
-					if (elem.size() == 1 || elem[1] == "reset")
+					if(elem.size() == 1 || elem[1] == "reset")
 						c = color;
 					else
 						c = std::stoi(elem[1], nullptr, 0);
@@ -103,7 +103,7 @@ void Display::DrawRawString(const Point<int>& dst, const std::string& text, unsi
 {
 	DxLib::DrawStringToHandle(pos.x + dst.x, pos.y + dst.y, text.c_str(), color, font);
 }
-void Display::DrawRawString(int x,int y, const std::string& text, unsigned int color) const
+void Display::DrawRawString(int x, int y, const std::string& text, unsigned int color) const
 {
 	DxLib::DrawStringToHandle(pos.x + x, pos.y + y, text.c_str(), color, font);
 }
@@ -111,7 +111,7 @@ void Display::DrawRawString(const Point<int>& dst, const std::string& text, unsi
 {
 	DxLib::DrawStringToHandle(pos.x + dst.x, pos.y + dst.y, text.c_str(), color, font);
 }
-void Display::DrawRawString(int x,int y, const std::string& text, unsigned int color, int font) const
+void Display::DrawRawString(int x, int y, const std::string& text, unsigned int color, int font) const
 {
 	DxLib::DrawStringToHandle(pos.x + x, pos.y + y, text.c_str(), color, font);
 }

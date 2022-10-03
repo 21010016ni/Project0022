@@ -5,8 +5,8 @@ extern std::mt19937 engine;
 
 Unit::StateSlot* Unit::hasState(int id)
 {
-	for (int i = 0; i < 4; ++i)
-		if (state[i] == id)
+	for(int i = 0; i < 4; ++i)
+		if(state[i] == id)
 			return &state[i];
 	return nullptr;
 }
@@ -15,7 +15,7 @@ void Unit::giveDamage(Unit& t, float m, char type)
 {
 	// Šî‘bƒ_ƒ[ƒWŒvŽZ
 	float v = 0.0f;
-	switch (type)
+	switch(type)
 	{
 	case 0:	// ”CˆÓi•¨—E–‚–@‚Ì‚¤‚¿‚‚¢‚Ù‚¤*”{—¦j
 		v = __max(t.value.atk, t.value.mag) * m;
@@ -34,14 +34,14 @@ void Unit::giveDamage(Unit& t, float m, char type)
 		break;
 	}
 	// —”ˆ—
-	float r = std::uniform_real_distribution<float>{ t.value.tec, t.value.tec + t.value.luc }(engine);
+	float r = std::uniform_real_distribution<float>{t.value.tec, t.value.tec + t.value.luc}(engine);
 	v *= r;
 	// ó‘ÔˆÙí‚Ìˆ—
-	if (t.hasState(10) != nullptr)
+	if(t.hasState(10) != nullptr)
 		v *= 1.3f;
 
 	// –hŒä—Íˆ—
-	switch (type)
+	switch(type)
 	{
 	case 2:
 		v -= value.def / ((t.value.atk + t.value.mag) / 4);
@@ -49,7 +49,7 @@ void Unit::giveDamage(Unit& t, float m, char type)
 	default:
 		v -= value.def;
 	}
-	if (m > 0)
+	if(m > 0)
 		v = __max(v, 0);
 
 	// ”½‰f
@@ -61,7 +61,7 @@ void Unit::giveDamage(Unit& t, float m, char type)
 void Unit::giveState(int slot, State* v, int time)
 {
 	// ”½‰f
-	if (v != nullptr)
+	if(v != nullptr)
 		state[slot].state = v;
 	state[slot] += time;
 	// •\Ž¦

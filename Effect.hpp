@@ -38,13 +38,13 @@ private:
 		Pos pos;
 
 		Inst(const Data* data, int x, int y, Pos pos);
-		
+
 		void play()const;
 	};
 
 	static inline std::vector<Data> data;
 	static inline std::list<Inst> list;
-	
+
 public:
 	static inline unsigned char volume = 255;
 
