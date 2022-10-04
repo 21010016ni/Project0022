@@ -1,6 +1,7 @@
 #include "Display.hpp"
 #include <boost/algorithm/string.hpp>
 #include "Icon.hpp"
+#include "string_mb_function.hpp"
 
 Display::Display(const Point<int>& pos, const Point<int>& siz) :pos(pos), siz(siz), font(-1), fontSize(0)
 {
@@ -44,7 +45,7 @@ void Display::DrawString(const Point<int>& dst, const std::string& text, unsigne
 		if(text[tp] != '<')
 		{
 			// ’Êí•\Ž¦ˆ—
-			tp = text.find_first_of('<', tp);
+			tp = ext::find_first_of_mb(text, '<', tp);
 			buf = text.substr(prev, tp - prev);
 			DxLib::DrawStringToHandle(textCursor.x, textCursor.y, buf.c_str(), c, font);
 			if(int i = (int)std::count(buf.cbegin(), buf.cend(), '\n'))
@@ -57,7 +58,7 @@ void Display::DrawString(const Point<int>& dst, const std::string& text, unsigne
 		}
 		else
 		{
-			if((tp = text.find_first_of('>', tp)) == std::string::npos)
+			if((tp = ext::find_first_of_mb(text, '>', tp)) == std::string::npos)
 				throw std::invalid_argument("'>' is not found.");
 			boost::split(elem, text.substr(++prev, tp - prev - 1), boost::is_any_of(","));
 			++tp;

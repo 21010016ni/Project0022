@@ -44,6 +44,17 @@ public:
 		while(text.size() > maxNum)
 			text.pop_back();
 	}
+	static const std::string* latest(Tag type)
+	{
+		for(const auto& i : text)
+		{
+			if(i.tag == type)
+			{
+				return &i.value;
+			}
+		}
+		return nullptr;
+	}
 	static void draw(size_t start);
 };
 

@@ -1,7 +1,8 @@
 #pragma once
-#include <format>
 #include <string>
+#include <memory>
 #include <vector>
+#include <map>
 #include "Status.hpp"
 #include "Skill.hpp"
 #include "State.hpp"
@@ -10,13 +11,27 @@
 class Charactor
 {
 public:
+	enum Situation :unsigned int
+	{
+		search,
+		dead,
+		skill_prev = 0xb0000000,
+		skill_after = 0xb1000000,
+		reaction_any = 0xfe000000,
+		reaction = 0xff000000,
+	};
+
+	std::string name;
+	Status status;
+	std::vector<Skill> skill;
+	std::multimap<unsigned int, std::string> word;
+
 	Charactor(const char* name, int color, int hp, int atk, int def, int mag, int reg, int spd, float tec, float luc)
 		:name(name), status(color, hp, atk, def, mag, reg, spd, tec, luc)
 	{
 	}
-	std::string name;
-	Status status;
-	std::vector<Skill> skill;
+
+	const std::string* GetWord(unsigned int key, const std::string& prev)const;
 };
 
 class Unit

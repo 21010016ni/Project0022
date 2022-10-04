@@ -2,6 +2,7 @@
 #include <DxLib.h>
 #include <random>
 #include <algorithm>
+#include "string_mb_function.hpp"
 
 extern std::mt19937 engine;
 
@@ -27,7 +28,7 @@ bool BGM::update()
 		}
 		PlayMusic(stack.top()->c_str(), DX_PLAYTYPE_BACK);
 		SetVolumeMusic(volume);
-		title = "ô" + stack.top()->substr(0, stack.top()->find_last_of('.')).substr(stack.top()->find_last_of("/\\") + 1);
+		title = "ô" + stack.top()->substr(0, ext::find_last_of_mb(*stack.top(), '.')).substr(ext::find_last_of_mb(*stack.top(), "/\\") + 1);
 		return true;
 	}
 	return false;

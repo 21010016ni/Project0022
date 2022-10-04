@@ -1,5 +1,8 @@
 #include "Charactor.hpp"
+#include <format>
 #include <random>
+#include <boost/algorithm/string.hpp>
+#include "string_mb_function.hpp"
 
 extern std::mt19937 engine;
 
@@ -67,3 +70,71 @@ void Unit::giveState(int slot, State* v, int time)
 	// 表示
 	Log::push(Log::Tag::battle, std::format("{}<>{}> {}{}", base->name, slot, (state[slot]) ? state[slot].state->Name() : "", state[slot].time).c_str());
 }
+
+const std::string* Charactor::GetWord(unsigned int key, const std::string& prev)const
+{
+	static std::string buf;
+	std::vector<std::string> elem;
+
+	for(auto i = word.equal_range(key); i.first != i.second; ++i.first)
+	{
+		// キーワードが指定されているかをチェック
+		auto p = ext::find_first_of_mb(i.first->second, '|');
+		if(p != std::string::npos)
+		{
+			// 指定されていたら、その位置までを切り出してprevに含まれているかを検索、含まれていなかったら次の条件へ
+			if(prev.find(i.first->second.substr(0, p)) == std::string::npos)
+				continue;
+			buf = i.first->second.substr(p);
+		}
+		else
+		{
+			// 指定されていなかった場合、そのまま
+			buf = i.first->second;
+		}
+
+		// 特殊文字置換
+		while((p = ext::find_first_of_mb(buf, '[')) != std::string::npos)
+		{
+			auto q = ext::find_first_of_mb(buf, ']', p);
+			if(q == std::string::npos)
+				throw;
+			boost::split(elem, buf.substr(p + 1, q - p - 2), boost::is_any_of(","));
+			auto it = elem.begin();
+			std::advance(it, std::uniform_int_distribution<size_t>{0, elem.size() - 1}(engine));
+			buf.replace(p, q - p, *it);
+		}
+		while((p = ext::find_first_of_mb(buf,'@')) != std::string::npos)
+		{
+			switch(buf.at(p + 1))
+			{
+			case 'm':
+				buf.replace(p, 2, std::format("#{:06x}", status.color & 0x00ffffff));
+				break;
+			case 'p':
+				if(prev.at(0) == '#')
+					buf.replace(p, 2, prev, 7);
+				else
+					buf.replace(p, 2, "");
+				break;
+			case 'a':
+				buf.replace(p, 2, std::format("#{:06x}", std::uniform_int_distribution{0x000000,0xffffff}(engine)));
+				break;
+			case 'r':
+				// ここから戦闘のインスタンスを読み込みに行くのがなんか設計上駄目な気がするのでひとまず実装保留
+				// たぶん戦闘とは別にパーティインスタンスを作るので、それが出来たら再開
+				buf.replace(p, 2, "");
+				break;
+			case 'f':
+				buf.replace(p, 2, "");
+				break;
+			case 'e':
+				buf.replace(p, 2, "");
+				break;
+			}
+		}
+		return &buf;
+	}
+	return nullptr;
+}
+

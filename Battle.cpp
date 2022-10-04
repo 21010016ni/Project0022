@@ -55,10 +55,23 @@ void Battle::update()
 			buf->cool = 0;
 			Log::push(Log::Tag::battle, std::format("{}の行動", buf->base->name).c_str());
 			unsigned char n = 0;
-			for(size_t j = 0; j < buf->base->skill.size() && n < 255; ++n)
+			for(unsigned int j = 0; j < buf->base->skill.size() && n < 255; ++n)
 			{
+				// スキル前発言
+				auto num = j;
+				auto pw = Log::latest(Log::talk);
+				auto word = buf->base->GetWord(Charactor::skill_prev + num, (pw != nullptr) ? *pw : "");
+				if(word != nullptr)
+					Log::push(Log::talk, word->c_str());
+
+				// スキル発動
 				Log::push(Log::Tag::battle, std::format("《{}》！", buf->base->skill[j].Name()).c_str());
 				buf->cool += buf->base->skill[j](*buf, *this, j);
+
+				// スキル後発言
+				word = buf->base->GetWord(Charactor::skill_after + num, (pw != nullptr) ? *pw : "");
+				if(word != nullptr)
+					Log::push(Log::talk, word->c_str());
 			}
 			Canvas::PlayEffect(0);
 			Log::push(Log::Tag::battle, std::format("{}回行動した　CT", (int)n, buf->cool).c_str());
@@ -68,9 +81,20 @@ void Battle::update()
 	Log::push(Log::Tag::battle, "");
 }
 
-std::vector<std::weak_ptr<Unit>>& Battle::get(const Unit& u, const std::function<bool(const Unit&, const Unit&)>& regulation, unsigned short num, unsigned short count)
+std::vector<std::weak_ptr<Unit>>& Battle::get(const Unit& u, const std::function<bool(const Unit&, const Unit&)>& regulation, unsigned short num, unsigned short count, bool overload)
 {
-	target.clear();
+	std::vector<std::weak_ptr<Unit>>* table;
+	if(overload)
+	{
+		table = &target;
+	}
+	else
+	{
+		static std::vector<std::weak_ptr<Unit>> over;
+		table = &over;
+	}
+
+	table->clear();
 	while(count-- > 0)
 	{
 		auto& buf = ShuffledUnit();
@@ -79,11 +103,11 @@ std::vector<std::weak_ptr<Unit>>& Battle::get(const Unit& u, const std::function
 		{
 			if(regulation(u, *(it->lock())))
 			{
-				target.emplace_back(*it);
+				table->emplace_back(*it);
 				++i;
 			}
 		}
 	}
-	return target;
+	return *table;
 }
 
