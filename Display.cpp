@@ -21,11 +21,11 @@ void Display::DrawIcon(int x, int y, int id)
 }
 void Display::DrawString(int x, int y, const std::string& text, unsigned int color)const
 {
-	DrawString({y,x}, text, color, font);
+	DrawString({ y,x }, text, color, font);
 }
 void Display::DrawString(int x, int y, const std::string& text, unsigned int color, int font)const
 {
-	DrawString({y,x}, text, color, font);
+	DrawString({ y,x }, text, color, font);
 }
 void Display::DrawString(const Point<int>& dst, const std::string& text, unsigned int color) const
 {
@@ -39,26 +39,12 @@ void Display::DrawString(const Point<int>& dst, const std::string& text, unsigne
 	size_t tp = 0, prev;
 	Point<int> textCursor = pos + dst;
 	// ループ
-	while(tp < text.size())
+	while (tp < text.size())
 	{
 		prev = tp;
-		if(text[tp] != '<')
+		if (text[tp] == '<')
 		{
-			// 通常表示処理
-			tp = ext::find_first_of_mb(text, '<', tp);
-			buf = text.substr(prev, tp - prev);
-			DxLib::DrawStringToHandle(textCursor.x, textCursor.y, buf.c_str(), c, font);
-			if(int i = (int)std::count(buf.cbegin(), buf.cend(), '\n'))
-			{
-				textCursor.y += fontSize * i;
-				textCursor.x = dst.x + pos.x;
-			}
-			else
-				textCursor.x += GetDrawStringWidthToHandle(buf.c_str(), (int)buf.size(), font);
-		}
-		else
-		{
-			if((tp = ext::find_first_of_mb(text, '>', tp)) == std::string::npos)
+			if ((tp = ext::find_first_of_mb(text, '>', tp)) == std::string::npos)
 				throw std::invalid_argument("'>' is not found.");
 			boost::split(elem, text.substr(++prev, tp - prev - 1), boost::is_any_of(","));
 			++tp;
@@ -66,36 +52,57 @@ void Display::DrawString(const Point<int>& dst, const std::string& text, unsigne
 			// 特殊文字処理
 			try
 			{
-				if(elem[0].empty())
+				if (elem[0].empty())
 				{
 					// もし処理の値が未設定だったら、<を出力して終了
 					DxLib::DrawStringToHandle(textCursor.x, textCursor.y, "<", c, font);
 					textCursor.x += GetDrawStringWidthToHandle("<", 1, font);
 				}
-				else if(elem[0] == "n")
+				else if (elem[0] == "n")
 				{
 					// n 改行
 					textCursor.y += fontSize;
 					textCursor.x = dst.x + pos.x;
 				}
-				else if(elem[0] == "i")
+				else if (elem[0] == "i")
 				{
 					// i 指定した番号のアイコンを表示
 					Icon::draw(textCursor, std::stoi(elem.at(1), nullptr, 16));
 					textCursor.x += Icon::get_size();
 				}
-				else if(elem[0] == "c")
+				else if (elem[0] == "c")
 				{
-					if(elem.size() == 1 || elem[1] == "reset")
+					if (elem.size() == 1 || elem[1] == "reset")
 						c = color;
 					else
 						c = std::stoi(elem[1], nullptr, 0);
 				}
 			}
-			catch(std::out_of_range)
+			catch (std::out_of_range)
 			{
 				throw std::invalid_argument("invalid argument.");
 			}
+		}
+		else if (text[tp] == '#')
+		{
+			DxLib::DrawCircle(textCursor.x + (fontSize - 4) / 2 + 1, textCursor.y + (fontSize - 4) / 2 + 1, (fontSize - 4) / 2, std::stoi(text.substr(tp + 1, 6), nullptr, 16));
+			DxLib::DrawCircle(textCursor.x + (fontSize - 4) / 2 + 1, textCursor.y + (fontSize - 4) / 2 + 1, (fontSize - 4) / 2, 0xff888888, FALSE);
+			tp += 7;
+			textCursor.x += fontSize;
+		}
+		else
+		{
+			// 通常表示処理
+			tp = ext::find_first_of_mb(text, "<#", tp);
+			buf = text.substr(prev, tp - prev);
+			DxLib::DrawStringToHandle(textCursor.x, textCursor.y, buf.c_str(), c, font);
+			if (int i = (int)std::count(buf.cbegin(), buf.cend(), '\n'))
+			{
+				textCursor.y += fontSize * i;
+				textCursor.x = dst.x + pos.x;
+			}
+			else
+				textCursor.x += GetDrawStringWidthToHandle(buf.c_str(), (int)buf.size(), font);
 		}
 	}
 }

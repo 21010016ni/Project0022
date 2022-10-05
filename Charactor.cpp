@@ -46,11 +46,11 @@ void Unit::giveDamage(Unit& t, float m, char type)
 	// –hŒä—Íˆ—
 	switch(type)
 	{
-	case 2:
-		v -= value.def / ((t.value.atk + t.value.mag) / 4);
+	case 3:
+		v += value.def / ((t.value.atk + t.value.mag) / 4.0f);
 		break;
 	default:
-		v -= value.def;
+		v += value.def;
 	}
 	if(m > 0)
 		v = __max(v, 0);
@@ -71,7 +71,7 @@ void Unit::giveState(int slot, State* v, int time)
 	Log::push(Log::Tag::battle, std::format("{}<>{}> {}{}", base->name, slot, (state[slot]) ? state[slot].state->Name() : "", state[slot].time).c_str());
 }
 
-const std::string* Charactor::GetWord(unsigned int key, const std::string& prev)const
+const std::string* Charactor::GetWord(unsigned int key, const std::string& prev, bool speaker)const
 {
 	static std::string buf;
 	std::vector<std::string> elem;
@@ -93,16 +93,21 @@ const std::string* Charactor::GetWord(unsigned int key, const std::string& prev)
 			buf = i.first->second;
 		}
 
+		if (speaker)
+		{
+			buf.insert(0, std::format("#{:06x}", status.color & 0x00ffffff));
+		}
+
 		// “ÁŽê•¶Žš’uŠ·
 		while((p = ext::find_first_of_mb(buf, '[')) != std::string::npos)
 		{
 			auto q = ext::find_first_of_mb(buf, ']', p);
 			if(q == std::string::npos)
 				throw;
-			boost::split(elem, buf.substr(p + 1, q - p - 2), boost::is_any_of(","));
+			boost::split(elem, buf.substr(p + 1, q - p - 1), boost::is_any_of(","));
 			auto it = elem.begin();
 			std::advance(it, std::uniform_int_distribution<size_t>{0, elem.size() - 1}(engine));
-			buf.replace(p, q - p, *it);
+			buf.replace(p, q - p + 1, *it);
 		}
 		while((p = ext::find_first_of_mb(buf,'@')) != std::string::npos)
 		{

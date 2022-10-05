@@ -19,6 +19,7 @@ int Application::Main(HINSTANCE, HINSTANCE, LPSTR, int)
 	// DxLib‰Šú‰»ƒuƒƒbƒN
 	//----------------------------------------------------------------<<
 	ChangeWindowMode(TRUE);
+	//SetUseCharCodeFormat(DX_CHARCODEFORMAT_UTF8);
 
 	//---------------------------------------------------------------->>
 	// ‰Šú‰»

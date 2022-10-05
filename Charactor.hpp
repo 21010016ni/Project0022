@@ -31,7 +31,7 @@ public:
 	{
 	}
 
-	const std::string* GetWord(unsigned int key, const std::string& prev)const;
+	const std::string* GetWord(unsigned int key, const std::string& prev, bool speaker = true)const;
 };
 
 class Unit

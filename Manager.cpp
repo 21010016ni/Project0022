@@ -30,29 +30,29 @@ void Manager::preset()
 	//BGM::set("data/bgm/自然.mp3");
 
 	// Charactor(name,color,hp,atk,def,mag,reg,spd,tec,luc)
-	charactor.emplace_back("テスト1", 0xffffffff, 300, 20, 10, 20, 0, 10, 0.8f, 0.5f);
+	charactor.emplace_back("テスト1", 0xffff8888, 300, 20, 10, 20, 0, 10, 0.8f, 0.5f);
 	charactor.back().skill.push_back(DataBase::skill[4]);
-	charactor.back().word.emplace(Charactor::skill_prev, "「あいよ」");
+	charactor.back().word.emplace(Charactor::skill_prev, "「[あいよ,ほら、いくぞ,よっこらせ]」");
 	charactor.back().word.emplace(Charactor::skill_after, "「ま、こんなもん」");
-	charactor.emplace_back("テスト2", 0xffffffff, 300, 8, 0, 0, 0, 10, 0.8f, 0.5f);
+	charactor.emplace_back("テスト2", 0xff88ff88, 300, 8, 0, 0, 0, 10, 0.8f, 0.5f);
 	charactor.back().skill.push_back(DataBase::skill[3]);
 	charactor.back().skill.push_back(DataBase::skill[1]);
 	charactor.back().word.emplace(Charactor::skill_prev, "「いっくよーっ」");
-	charactor.back().word.emplace(Charactor::skill_prev + 1, "「ほら、回復！」");
-	charactor.emplace_back("テスト3", 0xffffffff, 800, 10, 0, 0, 0, 10, 0.0f, 1.4f);
+	charactor.back().word.emplace(Charactor::skill_prev + 1, "「[ほら、回復！,大丈夫、#ff8888！？]」");
+	charactor.emplace_back("テスト3", 0xff8888ff, 800, 10, 0, 0, 0, 10, 0.2f, 1.4f);
 	charactor.back().skill.push_back(DataBase::skill[8]);
 	charactor.back().skill.push_back(DataBase::skill[9]);
 	charactor.back().word.emplace(Charactor::skill_prev, "「さて、始めよう」");
-	charactor.back().word.emplace(Charactor::skill_prev + 1, "「……処刑」");
+	charactor.back().word.emplace(Charactor::skill_prev + 1, "「<c,0xff4444>……処刑<c>」");
 
 	battle.set(charactor[0], Unit::Faction::player);
 	battle.set(charactor[1], Unit::Faction::player);
 	battle.set(charactor[2], Unit::Faction::enemy);
 
+	Menu::root.emplace_back(0x338, "戦闘進行", [](int, Menu::Item& i) { Manager::pause ^= true; Manager::CountReset(); if (Manager::pause) { i.icon = 0x350; } else { i.icon = 0x338; } });
 	Menu::root.emplace_back(0x5e5, "操作");
 	Menu::root.back().emplace_back(0x621, "パレット云々");
 	Menu::root.back().emplace_back(0x621, "戦闘スピード");
-	Menu::root.back().emplace_back(0x338, "戦闘進行", [](int, Menu::Item& i) { Manager::pause ^= true; Manager::CountReset(); if(Manager::pause) { i.icon = 0x350; } else { i.icon = 0x338; } });
 	Menu::root.emplace_back(0x5f7, "実績");
 	Menu::root.back().emplace_back(0x624, "いろいろ");
 	Menu::root.emplace_back(0x5f4, "設定");
