@@ -4,15 +4,11 @@
 #include "Log.hpp"
 #include "DataBase.hpp"
 #include "BGM.hpp"
+#include "Field.hpp"
 #include "Input.hpp"
 #include "Effect.hpp"
 #include "Canvas.hpp"
 #include "string_mb_function.hpp"
-
-void Manager::CountReset()
-{
-	count = 0;
-}
 
 void Manager::preset()
 {
@@ -45,11 +41,11 @@ void Manager::preset()
 	charactor.back().word.emplace(Charactor::skill_prev, "「さて、始めよう」");
 	charactor.back().word.emplace(Charactor::skill_prev + 1, "「<c,0xff4444>……処刑<c>」");
 
-	battle.set(charactor[0], Unit::Faction::player);
-	battle.set(charactor[1], Unit::Faction::player);
-	battle.set(charactor[2], Unit::Faction::enemy);
+	Field::set(charactor[0], Unit::Faction::player);
+	Field::set(charactor[1], Unit::Faction::player);
+	Field::set(charactor[2], Unit::Faction::enemy);
 
-	Menu::root.emplace_back(0x338, "戦闘進行", [](int, Menu::Item& i) { Manager::pause ^= true; Manager::CountReset(); if (Manager::pause) { i.icon = 0x350; } else { i.icon = 0x338; } });
+	Menu::root.emplace_back(0x338, "戦闘進行", [](int, Menu::Item& i) { Field::pause ^= true; Field::CountReset(); if (Field::pause) { i.icon = 0x350; } else { i.icon = 0x338; } });
 	Menu::root.emplace_back(0x5e5, "操作");
 	Menu::root.back().emplace_back(0x621, "パレット云々");
 	Menu::root.back().emplace_back(0x621, "戦闘スピード");
@@ -74,12 +70,7 @@ void Manager::preset()
 
 void Manager::update()
 {
-	// 戦闘進行
-	if(!pause && ++count >= speed)
-	{
-		count = 0;
-		battle.update();
-	}
+	Field::update();
 
 	// 入力受付
 	if(Mouse::click(MOUSE_INPUT_1))
@@ -112,8 +103,18 @@ void Manager::draw()
 {
 	Log::draw(textline);
 	Menu::draw(Mouse::pos());
-	//Canvas::draw();
+	Canvas::draw();
 	Effect::play();
+	int num = 4;
+	for (int i = 0; i < num; ++i)
+	{
+		DrawBox(414 + 30 * (i % 2), ((480 - num * 60) / (num + 1)) * (i + 1) + 60 * i, 414 + 60 + 30 * (i % 2), ((480 - num * 60) / (num + 1)) * (i + 1) + 60 * (i + 1), 0xffffffff, TRUE);
+	}
+	num = 5;
+	for (int i = 0; i < num; ++i)
+	{
+		DrawBox(904 + 30 * (i % 2), ((480 - num * 60) / (num + 1)) * (i + 1) + 60 * i, 904 + 60 + 30 * (i % 2), ((480 - num * 60) / (num + 1)) * (i + 1) + 60 * (i + 1), 0xffffffff, TRUE);
+	}
 	if(BGMCount > 0)
 	{
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, BGMCount);

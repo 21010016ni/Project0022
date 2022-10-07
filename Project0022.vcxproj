@@ -151,6 +151,7 @@
     <ClCompile Include="DataBase.cpp" />
     <ClCompile Include="Display.cpp" />
     <ClCompile Include="Effect.cpp" />
+    <ClCompile Include="Field.cpp" />
     <ClCompile Include="HandleManager.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="main.cpp" />
@@ -166,6 +167,7 @@
     <ClInclude Include="DataBase.hpp" />
     <ClInclude Include="Display.hpp" />
     <ClInclude Include="Effect.hpp" />
+    <ClInclude Include="Field.hpp" />
     <ClInclude Include="HandleManager.hpp" />
     <ClInclude Include="Icon.hpp" />
     <ClInclude Include="Input.hpp" />

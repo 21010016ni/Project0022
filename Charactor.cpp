@@ -3,6 +3,7 @@
 #include <random>
 #include <boost/algorithm/string.hpp>
 #include "string_mb_function.hpp"
+#include "Field.hpp"
 
 extern std::mt19937 engine;
 
@@ -111,34 +112,54 @@ const std::string* Charactor::GetWord(unsigned int key, const std::string& prev,
 		}
 		while((p = ext::find_first_of_mb(buf,'@')) != std::string::npos)
 		{
-			switch(buf.at(p + 1))
+			int color = 0;
+			while (true)
 			{
-			case 'm':
-				buf.replace(p, 2, std::format("#{:06x}", status.color & 0x00ffffff));
-				break;
-			case 'p':
-				if(prev.at(0) == '#')
-					buf.replace(p, 2, prev, 7);
-				else
-					buf.replace(p, 2, "");
-				break;
-			case 'a':
-				buf.replace(p, 2, std::format("#{:06x}", std::uniform_int_distribution{0x000000,0xffffff}(engine)));
-				break;
-			case 'r':
-				// ここから戦闘のインスタンスを読み込みに行くのがなんか設計上駄目な気がするのでひとまず実装保留
-				// たぶん戦闘とは別にパーティインスタンスを作るので、それが出来たら再開
-				buf.replace(p, 2, "");
-				break;
-			case 'f':
-				buf.replace(p, 2, "");
-				break;
-			case 'e':
-				buf.replace(p, 2, "");
+				switch (buf.at(p + 1))
+				{
+				case 'm':	// 自分自身の色
+					color = status.color;
+					break;
+				case 'p':	// 直前の発言者の色
+					if (prev.at(0) == '#')
+						color = std::stoi(prev.substr(1, 6), nullptr, 16);
+					else
+						goto SelectWordRoopEnd;
+					break;
+				case 'a':	// フルカラーの中からランダムの色
+					color = std::uniform_int_distribution{ 0x000000,0xffffff }(engine);
+					if (status.color == color)
+						continue;
+					break;
+				case 'r':	// 現在いるすべてのキャラクターの色
+					// まだ
+					goto SelectWordRoopEnd;
+					break;
+				case 'f':	// 現在フィールド上にいるキャラクターの色（変化していた場合、本来の色）
+					if (Field::UnitNum() <= 1)
+						goto SelectWordRoopEnd;
+					color = Field::GetRandom().lock()->base->status.color;
+					if (status.color == color)
+						continue;
+					break;
+				case 'n':	// 現在フィールド上にいるキャラクターの色（変化していた場合、変化後の色）
+					if (Field::UnitNum() <= 1)
+						goto SelectWordRoopEnd;
+					color = Field::GetRandom().lock()->value.color;
+					if (status.color == color)
+						continue;
+					break;
+				case 'e':	// 戦闘が発生していた場合、その相手の色
+					// まだ
+					goto SelectWordRoopEnd;
+					break;
+				}
 				break;
 			}
+			buf.replace(p, 2, std::format("#{:06x}", color & 0x00ffffff));
 		}
 		return &buf;
+		SelectWordRoopEnd:
 	}
 	return nullptr;
 }

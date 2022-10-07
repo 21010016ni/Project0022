@@ -1,6 +1,8 @@
 #include "HandleManager.hpp"
 #include <DxLib.h>
 
+int HandleManager::value = 3600;
+
 void HandleManager::update()
 {
     for (auto i = handle.cbegin(); i != handle.cend();)
