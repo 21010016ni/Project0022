@@ -8,6 +8,8 @@
 #include "State.hpp"
 #include "Log.hpp"
 
+#pragma warning(disable:26812)
+
 class Charactor
 {
 public:
