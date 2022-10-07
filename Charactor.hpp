@@ -27,6 +27,11 @@ public:
 	Status status;
 	std::vector<Skill> skill;
 	std::multimap<unsigned int, std::string> word;
+	struct Graph
+	{
+		std::string prof;
+		std::string icon;
+	} graph;
 
 	Charactor(const char* name, int color, int hp, int atk, int def, int mag, int reg, int spd, float tec, float luc)
 		:name(name), status(color, hp, atk, def, mag, reg, spd, tec, luc)
