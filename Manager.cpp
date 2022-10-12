@@ -1,4 +1,4 @@
-#include "Manager.hpp"
+ï»¿#include "Manager.hpp"
 #include <DxLib.h>
 #include "Icon.hpp"
 #include "Log.hpp"
@@ -10,9 +10,18 @@
 #include "Canvas.hpp"
 #include "string_mb_function.hpp"
 
+#include <iomanip>
+#include <iostream>
+
+// stringã«u8stringã‚’ä»£å…¥ã•ã›ã‚‹
+std::string operator<<=(std::string& s, const std::u8string& u8)
+{
+	s = (const char*)u8.c_str();
+}
+
 void Manager::preset()
 {
-	font = LoadFontDataToHandle("data/font/TTEdit2_3ƒSƒVƒbƒN.dft");
+	font = LoadFontDataToHandle("data/font/TTEdit2_3ã‚´ã‚·ãƒƒã‚¯.dft");
 	Icon::load("data/picture/icon.png", 16);
 	Log::SetFont(font);
 	Menu::SetFont(font);
@@ -20,59 +29,63 @@ void Manager::preset()
 	Canvas::back = LoadGraph("data/picture/back00.jpg");
 	//BGM::set("data/bgm/Changeling.mp3");
 	//BGM::set("data/bgm/Etude.mp3");
-	//BGM::set("data/bgm/‚È‚ñ‚¾‚©–¾‚é‚¢Š´‚¶‚Ìƒƒ‹ƒc.wav");
-	//BGM::set("data/bgm/–².mp3");
-	//BGM::set("data/bgm/•óÎ‚Æ‘z‚¢‚ğ‹¹‚É.mp3");
-	//BGM::set("data/bgm/©‘R.mp3");
+	//BGM::set("data/bgm/ãªã‚“ã ã‹æ˜ã‚‹ã„æ„Ÿã˜ã®ãƒ¯ãƒ«ãƒ„.wav");
+	//BGM::set("data/bgm/å¤¢.mp3");
+	//BGM::set("data/bgm/å®çŸ³ã¨æƒ³ã„ã‚’èƒ¸ã«.mp3");
+	//BGM::set("data/bgm/è‡ªç„¶.mp3");
 
 	// Charactor(name,color,hp,atk,def,mag,reg,spd,tec,luc)
-	charactor.emplace_back("ƒAƒ‹ƒRƒ“", 0xff0000ff, 300, 20, 10, 20, 0, 10, 0.8f, 0.5f);
+	charactor.emplace_back("ã‚¢ãƒ«ã‚³ãƒ³", 0xff0000ff, 300, 20, 10, 20, 0, 10, 0.8f, 0.5f);
 	charactor.back().skill.push_back(DataBase::skill[4]);
-	charactor.back().word.emplace(Charactor::search, "u#ffff00A‚ [cc‚»‚ÌA[‘Ì’²‚Í‚Ç‚¤‚¾,• Œ¸‚Á‚Ä‚È‚¢‚©]v");
-	charactor.back().word.emplace(Charactor::reaction + 0xffff00, "u‚Ö‚¢‚«|u‚¢‚âA‚Ü‚ cc‚»‚ñ‚È‚ç‚¢‚¢v");
-	charactor.back().word.emplace(Charactor::reaction + 0xffff00, "Œ’–Y|uˆá‚í‚¢I@‚¢‚âA‚Ü‚ cc‚È‚ç‚¢‚¢‚¯‚Çv");
-	charactor.back().word.emplace(Charactor::reaction + 0xffff00, "ƒXƒe[ƒL|u‚±‚ñ‚È‚Æ‚±‚Å–³’ƒ‚Ècc‚ [A‹A‚Á‚½‚ç‚Èv");
-	charactor.back().word.emplace(Charactor::reaction_any, "Œ³‹C|u‚Ü‚ cc‚Ú‚¿‚Ú‚¿‚Á‚Ä‚Æ‚±‚©BƒTƒ“ƒLƒ…v");
-	charactor.back().word.emplace(Charactor::reaction_any, "H|u[‚ Aˆ«‚¢cc•·‚¢‚Ä‚È‚©‚Á‚½,‚¿‚å‚Á‚Æ‚í‚©‚ñ‚Ë‚¦‚Ècc‚·‚Ü‚ñ]v");
-	charactor.back().word.emplace(Charactor::reaction_any, "u‚¨‚Á‚·v");
-	charactor.back().word.emplace(Charactor::battle_start, "u[‚³‚ÄA‚â‚é‚©,è‘‚­I‚í‚ç‚¹‚é‚¼]v");
-	charactor.back().word.emplace(Charactor::skill_prev, "u[‚ ‚¢‚æ,‚Ù‚çA‚¢‚­‚¼,‚æ‚Á‚±‚ç‚¹]v");
-	charactor.back().word.emplace(Charactor::skill_after, "u‚ÜA‚±‚ñ‚È‚à‚ñv");
-	charactor.emplace_back("ƒŒƒvƒŠƒJ", 0xffffff00, 300, 8, 0, 0, 0, 10, 0.8f, 0.5f);
+	charactor.back().word.emplace(Charactor::search, "ã€Œ#ffff00ã€ã‚ãƒ¼â€¦â€¦ãã®ã€[ä½“èª¿ã¯ã©ã†ã ,è…¹æ¸›ã£ã¦ãªã„ã‹]ã€");
+	charactor.back().word.emplace(Charactor::reaction + 0xffff00, "ã€Œã¸ã„ã|ã€Œã„ã‚„ã€ã¾ã‚â€¦â€¦ãã‚“ãªã‚‰ã„ã„ã€");
+	charactor.back().word.emplace(Charactor::reaction + 0xffff00, "å¥å¿˜|ã€Œé•ã‚ã„ï¼ã€€ã„ã‚„ã€ã¾ã‚â€¦â€¦ãªã‚‰ã„ã„ã‘ã©ã€");
+	charactor.back().word.emplace(Charactor::reaction + 0xffff00, "ã‚¹ãƒ†ãƒ¼ã‚­|ã€Œã“ã‚“ãªã¨ã“ã§ç„¡èŒ¶ãªâ€¦â€¦ã‚ãƒ¼ã€å¸°ã£ãŸã‚‰ãªã€");
+	charactor.back().word.emplace(Charactor::reaction_any, "å…ƒæ°—|ã€Œã¾ã‚â€¦â€¦ã¼ã¡ã¼ã¡ã£ã¦ã¨ã“ã‹ã€‚ã‚µãƒ³ã‚­ãƒ¥ã€");
+	charactor.back().word.emplace(Charactor::reaction_any, "ï¼Ÿ|ã€Œ[ã‚ã€æ‚ªã„â€¦â€¦èã„ã¦ãªã‹ã£ãŸ,ã¡ã‚‡ã£ã¨ã‚ã‹ã‚“ã­ãˆãªâ€¦â€¦ã™ã¾ã‚“]ã€");
+	charactor.back().word.emplace(Charactor::reaction_any, "ã€ŒãŠã£ã™ã€");
+	charactor.back().word.emplace(Charactor::battle_start, "ã€Œ[ã•ã¦ã€ã‚„ã‚‹ã‹,æ‰‹æ—©ãçµ‚ã‚ã‚‰ã›ã‚‹ã]ã€");
+	charactor.back().word.emplace(Charactor::skill_prev, "ã€Œ[ã‚ã„ã‚ˆ,ã»ã‚‰ã€ã„ãã,ã‚ˆã£ã“ã‚‰ã›]ã€");
+	charactor.back().word.emplace(Charactor::skill_after, "ã€Œã¾ã€ã“ã‚“ãªã‚‚ã‚“ã€");
+	charactor.emplace_back("ãƒ¬ãƒ—ãƒªã‚«", 0xffffff00, 300, 8, 0, 0, 0, 10, 0.8f, 0.5f);
 	charactor.back().skill.push_back(DataBase::skill[3]);
 	charactor.back().skill.push_back(DataBase::skill[1]);
-	charactor.back().word.emplace(Charactor::reaction + 0x0000ff, "‘Ì’²‚Í‚Ç‚¤|u‚Ö‚¢‚«B‚ ‚è‚ª‚ÆA#0000ffv");
-	charactor.back().word.emplace(Charactor::reaction + 0x0000ff, "• Œ¸‚Á‚Ä‚È‚¢|u[ccH@‚³‚Á‚«‚½‚×‚½B#0000ffA‚à‚¤–Y‚ê‚½H@Œ’–YH,‚¨‚êAƒXƒe[ƒL‚ªH‚×‚½‚¢B—pˆÓ‚µ‚ÄA#0000ff]v");
-	charactor.back().word.emplace(Charactor::reaction_any, "H|u[‚×‚Â‚Écc,‚µ‚ç‚È‚¢]v");
-	charactor.back().word.emplace(Charactor::reaction_any, "u[cc‚È‚ÉB‚¤‚é‚³‚¢,‚Í‚È‚·‚±‚Æ‚È‚¢‚æ]v");
-	charactor.back().word.emplace(Charactor::battle_start, "u[cc‚ª‚é‚é,èAo‚µ‚Ä‚¢‚¢H@cc‚¿‚¥]v");
-	charactor.emplace_back("‚È‚ñ‚©‚Â‚æ‚¢“G", 0xffff88ff, 800, 10, 0, 0, 0, 10, 0.2f, 1.4f);
+	charactor.back().word.emplace(Charactor::reaction + 0x0000ff, "ä½“èª¿ã¯ã©ã†|ã€Œã¸ã„ãã€‚ã‚ã‚ŠãŒã¨ã€#0000ffã€");
+	charactor.back().word.emplace(Charactor::reaction + 0x0000ff, "è…¹æ¸›ã£ã¦ãªã„|ã€Œ[â€¦â€¦ï¼Ÿã€€ã•ã£ããŸã¹ãŸã€‚#0000ffã€ã‚‚ã†å¿˜ã‚ŒãŸï¼Ÿã€€å¥å¿˜ï¼Ÿ,ãŠã‚Œã€ã‚¹ãƒ†ãƒ¼ã‚­ãŒé£Ÿã¹ãŸã„ã€‚ç”¨æ„ã—ã¦ã€#0000ff]ã€");
+	charactor.back().word.emplace(Charactor::reaction_any, "ï¼Ÿ|ã€Œ[ã¹ã¤ã«â€¦â€¦,ã—ã‚‰ãªã„]ã€");
+	charactor.back().word.emplace(Charactor::reaction_any, "ã€Œ[â€¦â€¦ãªã«ã€‚ã†ã‚‹ã•ã„,ã¯ãªã™ã“ã¨ãªã„ã‚ˆ]ã€");
+	charactor.back().word.emplace(Charactor::battle_start, "ã€Œ[â€¦â€¦ãŒã‚‹ã‚‹,æ‰‹ã€å‡ºã—ã¦ã„ã„ï¼Ÿã€€â€¦â€¦ã¡ã‡]ã€");
+	charactor.emplace_back("ãªã‚“ã‹ã¤ã‚ˆã„æ•µ", 0xffff88ff, 800, 10, 0, 0, 0, 10, 0.2f, 1.4f);
 	charactor.back().skill.push_back(DataBase::skill[8]);
 	charactor.back().skill.push_back(DataBase::skill[9]);
-	charactor.back().word.emplace(Charactor::search, "u[™él‚æA‰÷‚¢‰ü‚ß‚æ,ŠJn‚·‚é]v");
-	charactor.back().word.emplace(Charactor::skill_prev, "u‚³‚ÄAn‚ß‚æ‚¤v");
-	charactor.back().word.emplace(Charactor::skill_prev + 1, "u<c,0xff4444>ccˆŒY<c>v");
-	charactor.back().word.emplace(Charactor::battle_start, "u[™él‚æA‰÷‚¢‰ü‚ß‚æ,ŠJn‚·‚é]v");
+	charactor.back().word.emplace(Charactor::search, "ã€Œ[å’äººã‚ˆã€æ‚”ã„æ”¹ã‚ã‚ˆ,é–‹å§‹ã™ã‚‹]ã€");
+	charactor.back().word.emplace(Charactor::skill_prev, "ã€Œã•ã¦ã€å§‹ã‚ã‚ˆã†ã€");
+	charactor.back().word.emplace(Charactor::skill_prev + 1, "ã€Œ<c,0xff4444>â€¦â€¦å‡¦åˆ‘<c>ã€");
+	charactor.back().word.emplace(Charactor::battle_start, "ã€Œ[å’äººã‚ˆã€æ‚”ã„æ”¹ã‚ã‚ˆ,é–‹å§‹ã™ã‚‹]ã€");
+
+	std::u8string text(u8"ğŸ»ğŸ»ğŸ»ä¹¾æ¯ğŸ»ğŸ»ğŸ»");
+	std::string buf;
+	buf <<= text;
 
 	Field::set(charactor[0], Unit::Faction::player);
 	Field::set(charactor[1], Unit::Faction::player);
 	Field::set(charactor[2], Unit::Faction::enemy);
 
-	Menu::root.emplace_back(0x338, "í“¬is", [](int, Menu::Item& i) { Field::pause ^= true; Field::CountReset(); if (Field::pause) { i.icon = 0x350; } else { i.icon = 0x338; } });
-	Menu::root.emplace_back(0x5e5, "‘€ì");
-	Menu::root.back().emplace_back(0x621, "ƒpƒŒƒbƒg‰]X");
-	Menu::root.back().emplace_back(0x621, "í“¬ƒXƒs[ƒh");
-	Menu::root.emplace_back(0x5f7, "ÀÑ");
-	Menu::root.back().emplace_back(0x624, "‚¢‚ë‚¢‚ë");
-	Menu::root.emplace_back(0x5f4, "İ’è");
-	Menu::root.back().emplace_back(0x628, "ƒƒO•\¦");
-	Menu::root.back().back().emplace_back(0x320, "í“¬", [](int, Menu::Item& i) { Log::mute[Log::Tag::battle] ^= true; if(Log::mute[Log::Tag::battle]) { i.icon = 0x32a; } else { i.icon = 0x320; } });
-	Menu::root.back().back().emplace_back(0x320, "ƒVƒXƒeƒ€", [](int, Menu::Item& i) { Log::mute[Log::Tag::system] ^= true; if(Log::mute[Log::Tag::system]) { i.icon = 0x32a; } else { i.icon = 0x320; } });
-	Menu::root.back().back().emplace_back(0x320, "‰ï˜b", [](int, Menu::Item& i) { Log::mute[Log::Tag::talk] ^= true; if(Log::mute[Log::Tag::talk]) { i.icon = 0x32a; } else { i.icon = 0x320; } });
-	Menu::root.back().back().emplace_back(0x320, "ƒfƒoƒbƒO", [](int, Menu::Item& i) { Log::mute[Log::Tag::debug] ^= true; if(Log::mute[Log::Tag::debug]) { i.icon = 0x32a; } else { i.icon = 0x320; } });
-	Menu::root.back().emplace_back(0x629, "©“®ƒZ[ƒu");
+	Menu::root.emplace_back(0x338, "æˆ¦é—˜é€²è¡Œ", [](int, Menu::Item& i) { Field::pause ^= true; Field::CountReset(); if (Field::pause) { i.icon = 0x350; } else { i.icon = 0x338; } });
+	Menu::root.emplace_back(0x5e5, "æ“ä½œ");
+	Menu::root.back().emplace_back(0x621, "ãƒ‘ãƒ¬ãƒƒãƒˆäº‘ã€…");
+	Menu::root.back().emplace_back(0x621, "æˆ¦é—˜ã‚¹ãƒ”ãƒ¼ãƒ‰");
+	Menu::root.emplace_back(0x5f7, "å®Ÿç¸¾");
+	Menu::root.back().emplace_back(0x624, "ã„ã‚ã„ã‚");
+	Menu::root.emplace_back(0x5f4, "è¨­å®š");
+	Menu::root.back().emplace_back(0x628, "ãƒ­ã‚°è¡¨ç¤º");
+	Menu::root.back().back().emplace_back(0x320, "æˆ¦é—˜", [](int, Menu::Item& i) { Log::mute[Log::Tag::battle] ^= true; if(Log::mute[Log::Tag::battle]) { i.icon = 0x32a; } else { i.icon = 0x320; } });
+	Menu::root.back().back().emplace_back(0x320, "ã‚·ã‚¹ãƒ†ãƒ ", [](int, Menu::Item& i) { Log::mute[Log::Tag::system] ^= true; if(Log::mute[Log::Tag::system]) { i.icon = 0x32a; } else { i.icon = 0x320; } });
+	Menu::root.back().back().emplace_back(0x320, "ä¼šè©±", [](int, Menu::Item& i) { Log::mute[Log::Tag::talk] ^= true; if(Log::mute[Log::Tag::talk]) { i.icon = 0x32a; } else { i.icon = 0x320; } });
+	Menu::root.back().back().emplace_back(0x320, "ãƒ‡ãƒãƒƒã‚°", [](int, Menu::Item& i) { Log::mute[Log::Tag::debug] ^= true; if(Log::mute[Log::Tag::debug]) { i.icon = 0x32a; } else { i.icon = 0x320; } });
+	Menu::root.back().emplace_back(0x629, "è‡ªå‹•ã‚»ãƒ¼ãƒ–");
 
-	Effect::load(LoadGraph("data/effect/pipo-btleffect001.png"), 5, 1, LoadSoundMem("data/se/“Œ•Ea‚é01.mp3"));
+	Effect::load(LoadGraph("data/effect/pipo-btleffect001.png"), 5, 1, LoadSoundMem("data/se/åˆ€å‰£ãƒ»æ–¬ã‚‹01.mp3"));
 
 	volume.mute &= 0b11111110;
 
@@ -85,7 +98,7 @@ void Manager::update()
 {
 	Field::update();
 
-	// “ü—Íó•t
+	// å…¥åŠ›å—ä»˜
 	if(Mouse::click(MOUSE_INPUT_1))
 	{
 		if(Log::hit(Mouse::pos()))
@@ -105,7 +118,7 @@ void Manager::update()
 		}
 	}
 
-	// BGMXVˆ—
+	// BGMæ›´æ–°å‡¦ç†
 	if(BGM::update())
 	{
 		BGMCount = 600;
