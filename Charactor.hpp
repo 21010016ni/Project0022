@@ -17,6 +17,7 @@ public:
 	{
 		search,
 		dead,
+		battle_start,
 		skill_prev = 0xb0000000,
 		skill_after = 0xb1000000,
 		reaction_any = 0xfe000000,

@@ -31,8 +31,10 @@ public:
 	enum class GetMode :char
 	{
 		ignore,
-		ex,
-		in,
+		base_ex,
+		base_in,
+		now_ex,
+		now_in,
 	};
 
 	static std::weak_ptr<Unit> get(GetMode mode, int color);

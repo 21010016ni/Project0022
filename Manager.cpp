@@ -26,20 +26,33 @@ void Manager::preset()
 	//BGM::set("data/bgm/自然.mp3");
 
 	// Charactor(name,color,hp,atk,def,mag,reg,spd,tec,luc)
-	charactor.emplace_back("テスト1", 0xffff8888, 300, 20, 10, 20, 0, 10, 0.8f, 0.5f);
+	charactor.emplace_back("アルコン", 0xff0000ff, 300, 20, 10, 20, 0, 10, 0.8f, 0.5f);
 	charactor.back().skill.push_back(DataBase::skill[4]);
+	charactor.back().word.emplace(Charactor::search, "「#ffff00、あー……その、[体調はどうだ,腹減ってないか]」");
+	charactor.back().word.emplace(Charactor::reaction + 0xffff00, "「へいき|「いや、まあ……そんならいい」");
+	charactor.back().word.emplace(Charactor::reaction + 0xffff00, "健忘|「違わい！　いや、まあ……ならいいけど」");
+	charactor.back().word.emplace(Charactor::reaction + 0xffff00, "ステーキ|「こんなとこで無茶な……あー、帰ったらな」");
+	charactor.back().word.emplace(Charactor::reaction_any, "元気|「まあ……ぼちぼちってとこか。サンキュ」");
+	charactor.back().word.emplace(Charactor::reaction_any, "？|「[あ、悪い……聞いてなかった,ちょっとわかんねえな……すまん]」");
+	charactor.back().word.emplace(Charactor::reaction_any, "「おっす」");
+	charactor.back().word.emplace(Charactor::battle_start, "「[さて、やるか,手早く終わらせるぞ]」");
 	charactor.back().word.emplace(Charactor::skill_prev, "「[あいよ,ほら、いくぞ,よっこらせ]」");
 	charactor.back().word.emplace(Charactor::skill_after, "「ま、こんなもん」");
-	charactor.emplace_back("テスト2", 0xff88ff88, 300, 8, 0, 0, 0, 10, 0.8f, 0.5f);
+	charactor.emplace_back("レプリカ", 0xffffff00, 300, 8, 0, 0, 0, 10, 0.8f, 0.5f);
 	charactor.back().skill.push_back(DataBase::skill[3]);
 	charactor.back().skill.push_back(DataBase::skill[1]);
-	charactor.back().word.emplace(Charactor::skill_prev, "「いっくよーっ」");
-	charactor.back().word.emplace(Charactor::skill_prev + 1, "「[ほら、回復！,大丈夫、#ff8888！？]」");
-	charactor.emplace_back("テスト3", 0xff8888ff, 800, 10, 0, 0, 0, 10, 0.2f, 1.4f);
+	charactor.back().word.emplace(Charactor::reaction + 0x0000ff, "体調はどう|「へいき。ありがと、#0000ff」");
+	charactor.back().word.emplace(Charactor::reaction + 0x0000ff, "腹減ってない|「[……？　さっきたべた。#0000ff、もう忘れた？　健忘？,おれ、ステーキが食べたい。用意して、#0000ff]」");
+	charactor.back().word.emplace(Charactor::reaction_any, "？|「[べつに……,しらない]」");
+	charactor.back().word.emplace(Charactor::reaction_any, "「[……なに。うるさい,はなすことないよ]」");
+	charactor.back().word.emplace(Charactor::battle_start, "「[……がるる,手、出していい？　……ちぇ]」");
+	charactor.emplace_back("なんかつよい敵", 0xffff88ff, 800, 10, 0, 0, 0, 10, 0.2f, 1.4f);
 	charactor.back().skill.push_back(DataBase::skill[8]);
 	charactor.back().skill.push_back(DataBase::skill[9]);
+	charactor.back().word.emplace(Charactor::search, "「[咎人よ、悔い改めよ,開始する]」");
 	charactor.back().word.emplace(Charactor::skill_prev, "「さて、始めよう」");
 	charactor.back().word.emplace(Charactor::skill_prev + 1, "「<c,0xff4444>……処刑<c>」");
+	charactor.back().word.emplace(Charactor::battle_start, "「[咎人よ、悔い改めよ,開始する]」");
 
 	Field::set(charactor[0], Unit::Faction::player);
 	Field::set(charactor[1], Unit::Faction::player);
@@ -103,7 +116,7 @@ void Manager::draw()
 {
 	Log::draw(textline);
 	Menu::draw(Mouse::pos());
-	Canvas::draw();
+	//Canvas::draw();
 	Effect::play();
 	int num = 4;
 	for (int i = 0; i < num; ++i)

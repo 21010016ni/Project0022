@@ -86,7 +86,7 @@ const std::string* Charactor::GetWord(unsigned int key, const std::string& prev,
 			// 指定されていたら、その位置までを切り出してprevに含まれているかを検索、含まれていなかったら次の条件へ
 			if(prev.find(i.first->second.substr(0, p)) == std::string::npos)
 				continue;
-			buf = i.first->second.substr(p);
+			buf = i.first->second.substr(p + 1);
 		}
 		else
 		{
@@ -113,6 +113,7 @@ const std::string* Charactor::GetWord(unsigned int key, const std::string& prev,
 		while((p = ext::find_first_of_mb(buf,'@')) != std::string::npos)
 		{
 			int color = 0;
+			std::weak_ptr<Unit> unit;
 			while (true)
 			{
 				switch (buf.at(p + 1))
@@ -127,27 +128,26 @@ const std::string* Charactor::GetWord(unsigned int key, const std::string& prev,
 						goto SelectWordRoopEnd;
 					break;
 				case 'a':	// フルカラーの中からランダムの色
-					color = std::uniform_int_distribution{ 0x000000,0xffffff }(engine);
-					if (status.color == color)
-						continue;
+					do
+					{
+						color = std::uniform_int_distribution{ 0x000000,0xffffff }(engine);
+					} while (color == (status.color & 0x00ffffff));
 					break;
 				case 'r':	// 現在いるすべてのキャラクターの色
 					// まだ
 					goto SelectWordRoopEnd;
 					break;
 				case 'f':	// 現在フィールド上にいるキャラクターの色（変化していた場合、本来の色）
-					if (Field::UnitNum() <= 1)
+					unit = Field::get(Field::GetMode::base_ex, status.color);
+					if (unit.expired())
 						goto SelectWordRoopEnd;
-					color = Field::GetRandom().lock()->base->status.color;
-					if (status.color == color)
-						continue;
+					color = unit.lock()->base->status.color;
 					break;
 				case 'n':	// 現在フィールド上にいるキャラクターの色（変化していた場合、変化後の色）
-					if (Field::UnitNum() <= 1)
+					unit = Field::get(Field::GetMode::now_ex, status.color);
+					if (unit.expired())
 						goto SelectWordRoopEnd;
-					color = Field::GetRandom().lock()->value.color;
-					if (status.color == color)
-						continue;
+					color = unit.lock()->value.color;
 					break;
 				case 'e':	// 戦闘が発生していた場合、その相手の色
 					// まだ
@@ -159,7 +159,8 @@ const std::string* Charactor::GetWord(unsigned int key, const std::string& prev,
 			buf.replace(p, 2, std::format("#{:06x}", color & 0x00ffffff));
 		}
 		return &buf;
-		SelectWordRoopEnd:
+	SelectWordRoopEnd:
+		continue;
 	}
 	return nullptr;
 }

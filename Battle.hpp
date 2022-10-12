@@ -19,6 +19,10 @@ public:
 	{
 		unit.emplace_back(new Unit(charactor, faction));
 	}
+	void set(std::shared_ptr<Unit>& charactor)
+	{
+		unit.emplace_back(charactor);
+	}
 	void update();
 	std::vector<std::weak_ptr<Unit>>& get(const Unit&, const std::function<bool(const Unit&, const Unit&)>& regulation, unsigned short num = 1, unsigned short count = 1, bool overload = true);
 };

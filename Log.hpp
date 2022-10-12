@@ -40,9 +40,9 @@ public:
     {
         display.SetFont(font);
     }
-    static void push(unsigned int color, const char* data)
+    static void push(unsigned int tag, const char* data)
     {
-        text.emplace_front(color, data);
+        text.emplace_front(tag, data);
         while (text.size() > maxNum)
             text.pop_back();
     }
