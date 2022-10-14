@@ -12,7 +12,7 @@
 
 void Manager::preset()
 {
-	font = LoadFontDataToHandle("data/font/TTEdit2_3ゴシック.dft");
+	font = LoadFontDataToHandle((const char*)u8"data/font/TTEdit2_3ゴシック.dft");
 	Icon::load("data/picture/icon.png", 16);
 	Log::SetFont(font);
 	Menu::SetFont(font);
@@ -31,7 +31,7 @@ void Manager::preset()
 	charactor.back().word.emplace(Charactor::search, u8"「#ffff00、あー……その、[体調はどうだ,腹減ってないか]」");
 	charactor.back().word.emplace(Charactor::reaction + 0xffff00, u8"「へいき|「いや、まあ……そんならいい」");
 	charactor.back().word.emplace(Charactor::reaction + 0xffff00, u8"健忘|「違わい！　いや、まあ……ならいいけど」");
-	charactor.back().word.emplace(Charactor::reaction + 0xffff00, u8"ステーキ|「こんなとこで無茶な……あー、帰ったらな」");
+	charactor.back().word.emplace(Charactor::reaction + 0xffff00, u8"ステーキ|「こんなとこで無茶な……帰ったらな」");
 	charactor.back().word.emplace(Charactor::reaction_any, u8"元気|「まあ……ぼちぼちってとこか。サンキュ」");
 	charactor.back().word.emplace(Charactor::reaction_any, u8"？|「[あ、悪い……聞いてなかった,ちょっとわかんねえな……すまん]」");
 	charactor.back().word.emplace(Charactor::reaction_any, u8"「おっす」");
@@ -49,7 +49,6 @@ void Manager::preset()
 	charactor.emplace_back(u8"なんかつよい敵", 0xffff88ff, 800, 10, 0, 0, 0, 10, 0.2f, 1.4f);
 	charactor.back().skill.push_back(DataBase::skill[8]);
 	charactor.back().skill.push_back(DataBase::skill[9]);
-	charactor.back().word.emplace(Charactor::search, u8"「[咎人よ、悔い改めよ,開始する]」");
 	charactor.back().word.emplace(Charactor::skill_prev, u8"「さて、始めよう」");
 	charactor.back().word.emplace(Charactor::skill_prev + 1, u8"「<c,0xff4444>……処刑<c>」");
 	charactor.back().word.emplace(Charactor::battle_start, u8"「[咎人よ、悔い改めよ,開始する]」");

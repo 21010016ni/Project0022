@@ -25,7 +25,7 @@ unsigned int color(const std::u8string& u8)
 {
 	if (u8[0] != u8'#')
 		throw std::invalid_argument("argument not colorcode");
-	return std::stoi(ext::convert(u8), nullptr, 16);
+	return std::stoi(ext::convert(u8).substr(1, 6), nullptr, 16);
 }
 
 std::u8string color(unsigned int value)

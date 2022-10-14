@@ -3,6 +3,7 @@
 #include <chrono>
 #include "Input.hpp"
 #include "Manager.hpp"
+#include "convert_string.hpp"
 
 Point<int> Application::WindowSize = {600,1024};
 int Application::WindowColorBit = 32;
@@ -28,6 +29,8 @@ int Application::Main(HINSTANCE, HINSTANCE, LPSTR, int)
 	// 初期化ブロック
 	//----------------------------------------------------------------<<
 	Manager::preset();
+
+	std::u8string u8s = u8"🍻🍻🍻乾杯🍻🍻🍻";
 
 	//---------------------------------------------------------------->>
 	// タイトル表示
@@ -56,8 +59,6 @@ int Application::Main(HINSTANCE, HINSTANCE, LPSTR, int)
 		// 描画ブロック
 		//----------------------------------------------------------------<<
 		Manager::draw();
-		DrawString(0, 0, "abcABC123", 0xffffffff);
-		DrawString(0, 30, (const char*)u8"🍻🍻🍻乾杯🍻🍻🍻", 0xffffffff);
 
 		//---------------------------------------------------------------->>
 		// 画面表示

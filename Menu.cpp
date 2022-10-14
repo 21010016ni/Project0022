@@ -1,4 +1,5 @@
 #include "Menu.hpp"
+#include "convert_string.hpp"
 
 Display Menu::display({0,0}, {400,384});
 
