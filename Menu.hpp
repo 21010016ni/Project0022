@@ -55,6 +55,7 @@ private:
 
 	static Point<int> itemSize;
 	static inline int se[2] = { -1,-1 };
+	static inline bool prevFlag = false;
 
 public:
 	static Item root;

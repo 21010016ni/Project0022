@@ -39,7 +39,7 @@ public:
         none,
     };
 
-    static inline int maxNum = 128, drawNum = 32;
+    static int maxNum, drawNum;
     static inline std::map<unsigned int, bool> mute;
 
     Log() = delete;

@@ -1,5 +1,6 @@
 ﻿#include "Manager.hpp"
 #include <DxLib.h>
+#include "Particle.hpp"
 #include "Icon.hpp"
 #include "Log.hpp"
 #include "DataBase.hpp"
@@ -12,12 +13,13 @@
 
 void Manager::preset()
 {
-	font = LoadFontDataToHandle((const char*)u8"data/font/TTEdit2_3ゴシック.dft");
+	font = LoadFontDataToHandle((const char*)u8"data/font/NotoSansJPLight.dft");
 	Icon::load("data/picture/icon.png", 16);
 	Log::SetFont(font);
 	Menu::SetFont(font);
 	Menu::SetSE(LoadSoundMem("data/se/select.mp3"), LoadSoundMem("data/se/decision.mp3"));
 	Canvas::back = LoadGraph("data/picture/back00.jpg");
+	ChangeFont("Noto Sans JP Light");
 	//BGM::set("data/bgm/Changeling.mp3");
 	//BGM::set("data/bgm/Etude.mp3");
 	//BGM::set("data/bgm/なんだか明るい感じのワルツ.wav");
@@ -71,7 +73,7 @@ void Manager::preset()
 	Menu::root.back().back().emplace_back(0x320, u8"デバッグ", [](int, Menu::Item& i) { Log::mute[Log::Tag::debug] ^= true; if(Log::mute[Log::Tag::debug]) { i.icon = 0x32a; } else { i.icon = 0x320; } });
 	Menu::root.back().emplace_back(0x629, u8"自動セーブ");
 
-	Effect::load(LoadGraph("data/effect/pipo-btleffect001.png"), 5, 1, LoadSoundMem("data/se/刀剣・斬る01.mp3"));
+	Effect::load(LoadGraph("data/effect/pipo-btleffect001.png"), 5, 1, LoadSoundMem((const char*)u8"data/se/刀剣・斬る01.mp3"));
 
 	volume.mute &= 0b11111110;
 
@@ -113,20 +115,20 @@ void Manager::update()
 
 void Manager::draw()
 {
+	Canvas::draw();
 	Log::draw(textline);
 	Menu::draw(Mouse::pos());
-	//Canvas::draw();
 	Effect::play();
-	int num = 4;
-	for (int i = 0; i < num; ++i)
-	{
-		DrawBox(414 + 30 * (i % 2), ((480 - num * 60) / (num + 1)) * (i + 1) + 60 * i, 414 + 60 + 30 * (i % 2), ((480 - num * 60) / (num + 1)) * (i + 1) + 60 * (i + 1), 0xffffffff, TRUE);
-	}
-	num = 5;
-	for (int i = 0; i < num; ++i)
-	{
-		DrawBox(904 + 30 * (i % 2), ((480 - num * 60) / (num + 1)) * (i + 1) + 60 * i, 904 + 60 + 30 * (i % 2), ((480 - num * 60) / (num + 1)) * (i + 1) + 60 * (i + 1), 0xffffffff, TRUE);
-	}
+	//int num = 4;
+	//for (int i = 0; i < num; ++i)
+	//{
+	//	DrawBox(414 + 30 * (i % 2), ((480 - num * 60) / (num + 1)) * (i + 1) + 60 * i, 414 + 60 + 30 * (i % 2), ((480 - num * 60) / (num + 1)) * (i + 1) + 60 * (i + 1), 0xffffffff, TRUE);
+	//}
+	//num = 5;
+	//for (int i = 0; i < num; ++i)
+	//{
+	//	DrawBox(904 + 30 * (i % 2), ((480 - num * 60) / (num + 1)) * (i + 1) + 60 * i, 904 + 60 + 30 * (i % 2), ((480 - num * 60) / (num + 1)) * (i + 1) + 60 * (i + 1), 0xffffffff, TRUE);
+	//}
 	if(BGMCount > 0)
 	{
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, BGMCount);
@@ -134,5 +136,7 @@ void Manager::draw()
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		BGMCount -= 2;
 	}
+
+	ParticleSystem::draw();
 }
 

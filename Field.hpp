@@ -2,6 +2,14 @@
 #include "Charactor.hpp"
 #include "Battle.hpp"
 
+namespace GetMode
+{
+	unsigned char ex = 0x01;
+	unsigned char in = 0x03;
+	unsigned char base = 0x00;
+	unsigned char now = 0x04;
+}
+
 class Field
 {
 	static inline int count = 0;	// 更新カウント
@@ -28,16 +36,7 @@ public:
 
 	static void update();
 
-	enum class GetMode :char
-	{
-		ignore,
-		base_ex,
-		base_in,
-		now_ex,
-		now_in,
-	};
-
-	static std::weak_ptr<Unit> get(GetMode mode, int color);
+	static std::weak_ptr<Unit> get(unsigned char mode = 0, int color = 0);
 	static constexpr size_t UnitNum()noexcept { return unit.size(); }
 };
 

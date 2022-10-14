@@ -1,6 +1,7 @@
 #include "Charactor.hpp"
 #include <format>
 #include <random>
+#include <fstream>
 #include <boost/algorithm/string.hpp>
 #include "convert_string.hpp"
 #include "Field.hpp"
@@ -134,13 +135,13 @@ const Log::Text Charactor::GetWord(unsigned int key, const Log::Text& prev, bool
 					goto SelectWordRoopEnd;
 					break;
 				case 'f':	// 現在フィールド上にいるキャラクターの色（変化していた場合、本来の色）
-					unit = Field::get(Field::GetMode::base_ex, status.color);
+					unit = Field::get(GetMode::ex | GetMode::base, status.color);
 					if (unit.expired())
 						goto SelectWordRoopEnd;
 					code = unit.lock()->base->status.color;
 					break;
 				case 'n':	// 現在フィールド上にいるキャラクターの色（変化していた場合、変化後の色）
-					unit = Field::get(Field::GetMode::now_ex, status.color);
+					unit = Field::get(GetMode::ex | GetMode::now, status.color);
 					if (unit.expired())
 						goto SelectWordRoopEnd;
 					code = unit.lock()->value.color;
@@ -165,5 +166,21 @@ const Log::Text Charactor::GetWord(unsigned int key, const Log::Text& prev, bool
 		continue;
 	}
 	return Log::Text();
+}
+
+Charactor Charactor::load(const char* FileName)
+{
+	std::ifstream ifs(FileName, std::ios::in | std::ios::binary);
+	if (!ifs.is_open())
+		throw std::invalid_argument("faiilure open file");
+}
+
+void Charactor::output(const std::string& Directory)
+{
+	std::ofstream ofs(Directory + ext::convert(color(status.color).substr(1)), std::ios::out | std::ios::binary | std::ios::trunc);
+	if (!ofs.is_open())
+		throw std::invalid_argument("faiilure create file");
+	
+	// ここにデータを書き込みする記述
 }
 

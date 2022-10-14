@@ -54,6 +54,7 @@ void Menu::select(const Point<int>& mouse)
 
 				// Œˆ’èSEÄ¶
 				PlaySoundMem(se[1], DX_PLAYTYPE_BACK);
+				prevFlag = true;
 
 				// ‘I‘ð‚µ‚½“à—e‚ªŽ‚ÂŠÖ”‚ðŽÀs
 				(*item)[buf](item->select, (*item)[buf]);
@@ -92,7 +93,7 @@ void Menu::draw(const Point<int>& mouse)
 			if(m.y >= p.y && m.y < p.y + itemSize.y * i->size())
 			{
 				now.y = (m.y - p.y) / itemSize.y;
-				if(now != prev)
+				if (now != prev && !prevFlag)
 				{
 					PlaySoundMem(se[0], DX_PLAYTYPE_BACK);
 				}
@@ -115,7 +116,7 @@ void Menu::draw(const Point<int>& mouse)
 	{
 		display.DrawBox(p.x, p.y + itemSize.y * n, siz, 0x3b3b3b, true);
 		display.DrawIcon(p.x, p.y + itemSize.y * n, (*i)[n].icon);
-		display.DrawRawString(p.x + itemSize.x, p.y + itemSize.y * n + 2, (*i)[n].text, 0xffffffff);
+		display.DrawRawString(p.x + itemSize.x + 2, p.y + itemSize.y * n + 4, (*i)[n].text, 0xffffffff);
 		display.DrawBox(p.x, p.y + itemSize.y * n, siz, 0x7a7a7a, false);
 	}
 	if(!highlight && now.x >= level)
@@ -124,7 +125,7 @@ void Menu::draw(const Point<int>& mouse)
 		if(m.y >= p.y && m.y < p.y + itemSize.y * i->size())
 		{
 			now.y = (m.y - p.y) / itemSize.y;
-			if(now != prev)
+			if(now != prev && !prevFlag)
 			{
 				PlaySoundMem(se[0], DX_PLAYTYPE_BACK);
 			}
@@ -138,5 +139,6 @@ void Menu::draw(const Point<int>& mouse)
 		}
 	}
 	prev = now;
+	prevFlag = false;
 }
 

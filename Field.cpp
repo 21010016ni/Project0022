@@ -1,5 +1,6 @@
 #include "Field.hpp"
 #include <random>
+#include "Particle.hpp"
 
 extern std::mt19937 engine;
 
@@ -7,8 +8,8 @@ int Field::speed = 60;
 
 void Field::update()
 {
-	// 仮（現状戦闘終了処理を作っていないので、一定時間戦ったらそれで終了するように）
-	static int battleCount = 0;
+	//// 仮（現状戦闘終了処理を作っていないので、一定時間戦ったらそれで終了するように）
+	//static int battleCount = 0;
 
 	// 進行
 	if (!pause && ++count >= speed)
@@ -18,8 +19,8 @@ void Field::update()
 		if (battle)
 		{
 			battle->update();
-			if (++battleCount >= 10)
-				battle.reset();
+			//if (++battleCount >= 10)
+			//	battle.reset();
 		}
 		else
 		{
@@ -35,7 +36,7 @@ void Field::update()
 			if (!std::uniform_int_distribution{ 0,19 }(engine))
 			{
 				// キャラクターを取得
-				auto wu = get(GetMode::ignore, 0xffffffff);
+				auto wu = get();
 				// キャラクターが存在していたら先頭開始時の台詞を探し、存在したらそれを発言
 				if (!wu.expired())
 				{
@@ -49,8 +50,8 @@ void Field::update()
 					battle->set(i);
 				}
 
-				// 仮
-				battleCount = 0;
+				//// 仮
+				//battleCount = 0;
 			}
 			else
 			{
@@ -62,7 +63,7 @@ void Field::update()
 				if (prev && (cpos = prev.text().find_first_of('#', 1)) != std::u8string::npos)
 				{
 					// 対象を取得する
-					auto wu = get(GetMode::now_in, color(prev.text().substr(cpos, 7)));
+					auto wu = get(GetMode::in | GetMode::now, color(prev.text().substr(cpos, 7)));
 					// 対象が存在していたら進む、そうでないなら終了
 					if (!wu.expired())
 					{
@@ -89,7 +90,7 @@ void Field::update()
 				if (!talked)
 				{
 					// キャラクターを取得
-					auto unit = get(GetMode::ignore, 0xffffffff);
+					auto unit = get();
 					// キャラクターが存在していたら探索時の台詞を探し、存在したらそれを発言
 					if (!unit.expired())
 					{
@@ -101,38 +102,36 @@ void Field::update()
 			}
 		}
 	}
+
+	if (!pause)
+	{
+		ParticleSystem::update();
+		if (!std::uniform_int_distribution{ 0,59 }(engine))
+			ParticleSystem::add<Dust>();
+	}
 }
 
-std::weak_ptr<Unit> Field::get(GetMode mode, int color)
+std::weak_ptr<Unit> Field::get(unsigned char mode, int color)
 {
-	static std::vector<std::weak_ptr<Unit>> v;
-	if (v.size() != unit.size())
+	static std::vector<std::weak_ptr<Unit>> container;
+	if (container.size() != unit.size())
 		for (auto& i : unit)
-			v.emplace_back(i);
-	std::shuffle(v.begin(), v.end(), engine);
-	for (auto& i : v)
+			container.emplace_back(i);
+	std::shuffle(container.begin(), container.end(), engine);
+	for (auto& i : container)
 	{
-		switch (mode)
+		if (mode & 1)
 		{
-		case Field::GetMode::ignore:
-			return i;
-		case Field::GetMode::base_ex:
-			if ((i.lock()->base->status.color & 0x00ffffff) != color)
+			int c = 0x00ffffff;
+			if (mode & 4)
+				c &= i.lock()->value.color;
+			else
+				c &= i.lock()->base->status.color;
+			if ((c == (color & 0x00ffffff)) == (mode & 2))
 				return i;
-			break;
-		case Field::GetMode::base_in:
-			if ((i.lock()->base->status.color & 0x00ffffff) == color)
-				return i;
-			break;
-		case Field::GetMode::now_ex:
-			if ((i.lock()->value.color & 0x00ffffff) != color)
-				return i;
-			break;
-		case Field::GetMode::now_in:
-			if ((i.lock()->value.color & 0x00ffffff) == color)
-				return i;
-			break;
 		}
+		else
+			return i;
 	}
 	return std::weak_ptr<Unit>();
 }
