@@ -16,14 +16,14 @@ public:
 
 	public:
 		int icon;	// アイコン番号
-		std::string text;	// 選択肢テキスト
+		std::u8string text;	// 選択肢テキスト
 		int select;	// 選択中番号（-1で未選択）
 
-		Item(int icon, const char* text) :icon(icon), text(text), select(-1)
+		Item(int icon, const char8_t* text) :icon(icon), text(text), select(-1)
 		{
 
 		}
-		Item(int icon, const char* text, const std::function<void(int, Item&)>& function) :icon(icon), text(text), function(function), select(-1)
+		Item(int icon, const char8_t* text, const std::function<void(int, Item&)>& function) :icon(icon), text(text), function(function), select(-1)
 		{
 
 		}
@@ -36,11 +36,11 @@ public:
 		{
 			return child.empty();
 		}
-		void emplace_back(int icon, const char* text)
+		void emplace_back(int icon, const char8_t* text)
 		{
 			child.emplace_back(icon, text);
 		}
-		void emplace_back(int icon, const char* text, const std::function<void(int, Item&)>& function)
+		void emplace_back(int icon, const char8_t* text, const std::function<void(int, Item&)>& function)
 		{
 			child.emplace_back(icon, text, function);
 		}

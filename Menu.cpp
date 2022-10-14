@@ -3,7 +3,7 @@
 Display Menu::display({0,0}, {400,384});
 
 Point<int> Menu::itemSize(24, 24);
-Menu::Item Menu::root(-1, "");
+Menu::Item Menu::root(-1, u8"");
 
 void Menu::SetSEVolume(unsigned char v)
 {

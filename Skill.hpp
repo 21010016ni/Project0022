@@ -7,13 +7,13 @@ class Battle;
 
 class Skill
 {
-	std::string name;
-	std::string lore;
+	std::u8string name;
+	std::u8string lore;
 	int cool;
 	std::function<unsigned int(Unit&, Battle&)> function;
 
 public:
-	Skill(std::string name, std::string lore, int cool, std::function<unsigned int(Unit&, Battle&)> function) :name(name), lore(lore), cool(cool), function(function)
+	Skill(const std::u8string& name, const std::u8string& lore, int cool, std::function<unsigned int(Unit&, Battle&)> function) :name(name), lore(lore), cool(cool), function(function)
 	{
 
 	}
@@ -22,7 +22,7 @@ public:
 		p += function(u, b);
 		return cool;
 	}
-	const std::string& Name()const
+	const std::u8string& Name()const
 	{
 		return name;
 	}

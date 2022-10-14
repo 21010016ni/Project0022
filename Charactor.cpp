@@ -2,7 +2,7 @@
 #include <format>
 #include <random>
 #include <boost/algorithm/string.hpp>
-#include "string_mb_function.hpp"
+#include "convert_string.hpp"
 #include "Field.hpp"
 
 extern std::mt19937 engine;
@@ -59,7 +59,7 @@ void Unit::giveDamage(Unit& t, float m, char type)
 	// 反映
 	value.hp += (int)v;
 	// 表示
-	Log::push(Log::Tag::battle, std::format("{} HP {}  (<c,{}>{:+}<c>)", base->name, value.hp, (r > 1.2f) ? 0xffffaa : ((v < 0) ? 0xffaaaa : 0xaaffaa), (int)v).c_str());
+	Log::push(Log::Tag::battle, ext::convert(std::format("{} HP {}  (<c,{}>{:+}<c>)", ext::convert(base->name), value.hp, (r > 1.2f) ? 0xffffaa : ((v < 0) ? 0xffaaaa : 0xaaffaa), (int)v)).c_str());
 }
 
 void Unit::giveState(int slot, State* v, int time)
@@ -69,22 +69,22 @@ void Unit::giveState(int slot, State* v, int time)
 		state[slot].state = v;
 	state[slot] += time;
 	// 表示
-	Log::push(Log::Tag::battle, std::format("{}<>{}> {}{}", base->name, slot, (state[slot]) ? state[slot].state->Name() : "", state[slot].time).c_str());
+	Log::push(Log::Tag::battle, ext::convert(std::format("{}<>{}> {}{}", ext::convert(base->name), slot, (state[slot]) ? ext::convert(state[slot].state->Name()) : "", state[slot].time)).c_str());
 }
 
-const std::string* Charactor::GetWord(unsigned int key, const std::string& prev, bool speaker)const
+const Log::Text Charactor::GetWord(unsigned int key, const Log::Text& prev, bool speaker)const
 {
-	static std::string buf;
-	std::vector<std::string> elem;
+	static std::u8string buf;
+	std::vector<std::u8string> elem;
 
 	for(auto i = word.equal_range(key); i.first != i.second; ++i.first)
 	{
 		// キーワードが指定されているかをチェック
-		auto p = ext::find_first_of_mb(i.first->second, '|');
-		if(p != std::string::npos)
+		auto p = i.first->second.find_first_of('|');
+		if(p != std::u8string::npos)
 		{
 			// 指定されていたら、その位置までを切り出してprevに含まれているかを検索、含まれていなかったら次の条件へ
-			if(prev.find(i.first->second.substr(0, p)) == std::string::npos)
+			if (prev && prev.text().find(i.first->second.substr(0, p)) == std::u8string::npos)
 				continue;
 			buf = i.first->second.substr(p + 1);
 		}
@@ -94,44 +94,40 @@ const std::string* Charactor::GetWord(unsigned int key, const std::string& prev,
 			buf = i.first->second;
 		}
 
-		if (speaker)
-		{
-			buf.insert(0, std::format("#{:06x}", status.color & 0x00ffffff));
-		}
-
 		// 特殊文字置換
-		while((p = ext::find_first_of_mb(buf, '[')) != std::string::npos)
+		while((p = buf.find_first_of('[')) != std::u8string::npos)
 		{
-			auto q = ext::find_first_of_mb(buf, ']', p);
-			if(q == std::string::npos)
+			auto q = buf.find_first_of(']', p);
+			if(q == std::u8string::npos)
 				throw;
 			boost::split(elem, buf.substr(p + 1, q - p - 1), boost::is_any_of(","));
 			auto it = elem.begin();
 			std::advance(it, std::uniform_int_distribution<size_t>{0, elem.size() - 1}(engine));
 			buf.replace(p, q - p + 1, *it);
 		}
-		while((p = ext::find_first_of_mb(buf,'@')) != std::string::npos)
+		while((p = buf.find_first_of('@')) != std::u8string::npos)
 		{
-			int color = 0;
+			int code = 0;
 			std::weak_ptr<Unit> unit;
 			while (true)
 			{
 				switch (buf.at(p + 1))
 				{
 				case 'm':	// 自分自身の色
-					color = status.color;
+					code = status.color;
 					break;
 				case 'p':	// 直前の発言者の色
-					if (prev.at(0) == '#')
-						color = std::stoi(prev.substr(1, 6), nullptr, 16);
+
+					if (prev && prev.HasSpeaker())
+						code = color(prev.text().substr(0, 7));
 					else
 						goto SelectWordRoopEnd;
 					break;
 				case 'a':	// フルカラーの中からランダムの色
 					do
 					{
-						color = std::uniform_int_distribution{ 0x000000,0xffffff }(engine);
-					} while (color == (status.color & 0x00ffffff));
+						code = std::uniform_int_distribution{ 0x000000,0xffffff }(engine);
+					} while (code == (status.color & 0x00ffffff));
 					break;
 				case 'r':	// 現在いるすべてのキャラクターの色
 					// まだ
@@ -141,13 +137,13 @@ const std::string* Charactor::GetWord(unsigned int key, const std::string& prev,
 					unit = Field::get(Field::GetMode::base_ex, status.color);
 					if (unit.expired())
 						goto SelectWordRoopEnd;
-					color = unit.lock()->base->status.color;
+					code = unit.lock()->base->status.color;
 					break;
 				case 'n':	// 現在フィールド上にいるキャラクターの色（変化していた場合、変化後の色）
 					unit = Field::get(Field::GetMode::now_ex, status.color);
 					if (unit.expired())
 						goto SelectWordRoopEnd;
-					color = unit.lock()->value.color;
+					code = unit.lock()->value.color;
 					break;
 				case 'e':	// 戦闘が発生していた場合、その相手の色
 					// まだ
@@ -156,12 +152,18 @@ const std::string* Charactor::GetWord(unsigned int key, const std::string& prev,
 				}
 				break;
 			}
-			buf.replace(p, 2, std::format("#{:06x}", color & 0x00ffffff));
+			buf.replace(p, 2, color(code));
 		}
-		return &buf;
+		if (speaker)
+		{
+			buf.insert(0, color(status.color));
+		}
+
+		return Log::Text(Log::talk, buf);
+
 	SelectWordRoopEnd:
 		continue;
 	}
-	return nullptr;
+	return Log::Text();
 }
 

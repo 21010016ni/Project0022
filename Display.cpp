@@ -1,7 +1,7 @@
 #include "Display.hpp"
 #include <boost/algorithm/string.hpp>
 #include "Icon.hpp"
-#include "string_mb_function.hpp"
+#include "convert_string.hpp"
 
 Display::Display(const Point<int>& pos, const Point<int>& siz) :pos(pos), siz(siz), font(-1), fontSize(0)
 {
@@ -19,23 +19,24 @@ void Display::DrawIcon(int x, int y, int id)
 {
 	Icon::draw(pos.x + x, pos.y + y, id);
 }
-void Display::DrawString(int x, int y, const std::string& text, unsigned int color)const
+
+void Display::DrawString(int x, int y, const std::u8string& text, unsigned int color)const
 {
 	DrawString({ y,x }, text, color, font);
 }
-void Display::DrawString(int x, int y, const std::string& text, unsigned int color, int font)const
+void Display::DrawString(int x, int y, const std::u8string& text, unsigned int color, int font)const
 {
 	DrawString({ y,x }, text, color, font);
 }
-void Display::DrawString(const Point<int>& dst, const std::string& text, unsigned int color) const
+void Display::DrawString(const Point<int>& dst, const std::u8string& text, unsigned int color) const
 {
 	DrawString(dst, text, color, font);
 }
-void Display::DrawString(const Point<int>& dst, const std::string& text, unsigned int color, int font)const
+void Display::DrawString(const Point<int>& dst, const std::u8string& text, unsigned int color, int font)const
 {
 	unsigned int c = color;
-	static std::vector<std::string> elem;
-	static std::string buf;
+	static std::vector<std::u8string> elem;
+	static std::u8string buf;
 	size_t tp = 0, prev;
 	Point<int> textCursor = pos + dst;
 	// ループ
@@ -44,7 +45,7 @@ void Display::DrawString(const Point<int>& dst, const std::string& text, unsigne
 		prev = tp;
 		if (text[tp] == '<')
 		{
-			if ((tp = ext::find_first_of_mb(text, '>', tp)) == std::string::npos)
+			if ((tp = text.find_first_of('>', tp)) == std::u8string::npos)
 				throw std::invalid_argument("'>' is not found.");
 			boost::split(elem, text.substr(++prev, tp - prev - 1), boost::is_any_of(","));
 			++tp;
@@ -58,24 +59,24 @@ void Display::DrawString(const Point<int>& dst, const std::string& text, unsigne
 					DxLib::DrawStringToHandle(textCursor.x, textCursor.y, "<", c, font);
 					textCursor.x += GetDrawStringWidthToHandle("<", 1, font);
 				}
-				else if (elem[0] == "n")
+				else if (elem[0] == u8"n")
 				{
 					// n 改行
 					textCursor.y += fontSize;
 					textCursor.x = dst.x + pos.x;
 				}
-				else if (elem[0] == "i")
+				else if (elem[0] == u8"i")
 				{
 					// i 指定した番号のアイコンを表示
-					Icon::draw(textCursor, std::stoi(elem.at(1), nullptr, 16));
+					Icon::draw(textCursor, std::stoi(ext::convert(elem.at(1)), nullptr, 16));
 					textCursor.x += Icon::get_size();
 				}
-				else if (elem[0] == "c")
+				else if (elem[0] == u8"c")
 				{
-					if (elem.size() == 1 || elem[1] == "reset")
+					if (elem.size() == 1 || elem[1] == u8"reset")
 						c = color;
 					else
-						c = std::stoi(elem[1], nullptr, 0);
+						c = std::stoi(ext::convert(elem[1]), nullptr, 0);
 				}
 			}
 			catch (std::out_of_range)
@@ -85,7 +86,7 @@ void Display::DrawString(const Point<int>& dst, const std::string& text, unsigne
 		}
 		else if (text[tp] == '#')
 		{
-			DxLib::DrawCircle(textCursor.x + (fontSize - 4) / 2 + 1, textCursor.y + (fontSize - 4) / 2 + 1, (fontSize - 4) / 2, std::stoi(text.substr(tp + 1, 6), nullptr, 16));
+			DxLib::DrawCircle(textCursor.x + (fontSize - 4) / 2 + 1, textCursor.y + (fontSize - 4) / 2 + 1, (fontSize - 4) / 2, std::stoi(ext::convert(text.substr(tp + 1, 6)), nullptr, 16));
 			DxLib::DrawCircle(textCursor.x + (fontSize - 4) / 2 + 1, textCursor.y + (fontSize - 4) / 2 + 1, (fontSize - 4) / 2, 0xff888888, FALSE);
 			tp += 7;
 			textCursor.x += fontSize;
@@ -93,34 +94,34 @@ void Display::DrawString(const Point<int>& dst, const std::string& text, unsigne
 		else
 		{
 			// 通常表示処理
-			tp = ext::find_first_of_mb(text, "<#", tp);
+			tp = text.find_first_of(u8"<#", tp);
 			buf = text.substr(prev, tp - prev);
-			DxLib::DrawStringToHandle(textCursor.x, textCursor.y, buf.c_str(), c, font);
+			DxLib::DrawStringToHandle(textCursor.x, textCursor.y, ext::tochar(buf), c, font);
 			if (int i = (int)std::count(buf.cbegin(), buf.cend(), '\n'))
 			{
 				textCursor.y += fontSize * i;
 				textCursor.x = dst.x + pos.x;
 			}
 			else
-				textCursor.x += GetDrawStringWidthToHandle(buf.c_str(), (int)buf.size(), font);
+				textCursor.x += GetDrawStringWidthToHandle(ext::tochar(buf), (int)buf.size(), font);
 		}
 	}
 }
 
-void Display::DrawRawString(const Point<int>& dst, const std::string& text, unsigned int color) const
+void Display::DrawRawString(const Point<int>& dst, const std::u8string& text, unsigned int color) const
 {
-	DxLib::DrawStringToHandle(pos.x + dst.x, pos.y + dst.y, text.c_str(), color, font);
+	DxLib::DrawStringToHandle(pos.x + dst.x, pos.y + dst.y, ext::tochar(text), color, font);
 }
-void Display::DrawRawString(int x, int y, const std::string& text, unsigned int color) const
+void Display::DrawRawString(int x, int y, const std::u8string& text, unsigned int color) const
 {
-	DxLib::DrawStringToHandle(pos.x + x, pos.y + y, text.c_str(), color, font);
+	DxLib::DrawStringToHandle(pos.x + x, pos.y + y, ext::tochar(text), color, font);
 }
-void Display::DrawRawString(const Point<int>& dst, const std::string& text, unsigned int color, int font) const
+void Display::DrawRawString(const Point<int>& dst, const std::u8string& text, unsigned int color, int font) const
 {
-	DxLib::DrawStringToHandle(pos.x + dst.x, pos.y + dst.y, text.c_str(), color, font);
+	DxLib::DrawStringToHandle(pos.x + dst.x, pos.y + dst.y, ext::tochar(text), color, font);
 }
-void Display::DrawRawString(int x, int y, const std::string& text, unsigned int color, int font) const
+void Display::DrawRawString(int x, int y, const std::u8string& text, unsigned int color, int font) const
 {
-	DxLib::DrawStringToHandle(pos.x + x, pos.y + y, text.c_str(), color, font);
+	DxLib::DrawStringToHandle(pos.x + x, pos.y + y, ext::tochar(text), color, font);
 }
 

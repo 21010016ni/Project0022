@@ -53,15 +53,23 @@ public:
 	{
 		DxLib::DrawCircle(pos.x + x, pos.y + y, r, color, fill);
 	}
+	void DrawGraph(const Point<int>& dst, int handle, bool TransFlag = true)
+	{
+		DxLib::DrawGraph(pos.x+dst.x, pos.y + dst.y, handle, TransFlag);
+	}
+	void DrawGraph(int x, int y, int handle, bool TransFlag = true)
+	{
+		DxLib::DrawGraph(pos.x + x, pos.y + y, handle, TransFlag);
+	}
 	void DrawIcon(const Point<int>& dst, int id);
 	void DrawIcon(int x, int y, int id);
-	void DrawString(const Point<int>& dst, const std::string& text, unsigned int color)const;
-	void DrawString(int x, int y, const std::string& text, unsigned int color)const;
-	void DrawString(const Point<int>& dst, const std::string& text, unsigned int color, int font)const;
-	void DrawString(int x, int y, const std::string& text, unsigned int color, int font)const;
-	void DrawRawString(const Point<int>& dst, const std::string& text, unsigned int color)const;
-	void DrawRawString(int x, int y, const std::string& text, unsigned int color)const;
-	void DrawRawString(const Point<int>& dst, const std::string& text, unsigned int color, int font)const;
-	void DrawRawString(int x, int y, const std::string& text, unsigned int color, int font)const;
+	void DrawString(const Point<int>& dst, const std::u8string& text, unsigned int color)const;
+	void DrawString(int x, int y, const std::u8string& text, unsigned int color)const;
+	void DrawString(const Point<int>& dst, const std::u8string& text, unsigned int color, int font)const;
+	void DrawString(int x, int y, const std::u8string& text, unsigned int color, int font)const;
+	void DrawRawString(const Point<int>& dst, const std::u8string& text, unsigned int color)const;
+	void DrawRawString(int x, int y, const std::u8string& text, unsigned int color)const;
+	void DrawRawString(const Point<int>& dst, const std::u8string& text, unsigned int color, int font)const;
+	void DrawRawString(int x, int y, const std::u8string& text, unsigned int color, int font)const;
 };
 

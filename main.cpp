@@ -1,4 +1,4 @@
-#include "Config.hpp"
+ï»¿#include "Config.hpp"
 #include <random>
 #include <chrono>
 #include "Input.hpp"
@@ -6,64 +6,66 @@
 
 Point<int> Application::WindowSize = {600,1024};
 int Application::WindowColorBit = 32;
-const char* Application::Title = "Chromatic Cult";
+const char8_t* Application::Title = u8"Chromatic Cult";
 const float Application::Ver = 0.00f;
 
 std::mt19937 engine(std::random_device{}());
 
 int Application::Main(HINSTANCE, HINSTANCE, LPSTR, int)
 {
-	// ‰Šú‰»
+	// åˆæœŸåŒ–
 	SetMainWindowText("Now Loading...");
 	SetGraphMode(WindowSize.x, WindowSize.y, WindowColorBit);
-	// DxLib‰Šú‰»ƒuƒƒbƒN
+	// DxLibåˆæœŸåŒ–ãƒ–ãƒ­ãƒƒã‚¯
 	//----------------------------------------------------------------<<
 	ChangeWindowMode(TRUE);
-	//SetUseCharCodeFormat(DX_CHARCODEFORMAT_UTF8);
+	SetUseCharCodeFormat(DX_CHARCODEFORMAT_UTF8);
 
 	//---------------------------------------------------------------->>
-	// ‰Šú‰»
+	// åˆæœŸåŒ–
 	if(DxLib_Init() == -1) return -1;
 	SetDrawScreen(DX_SCREEN_BACK);
-	// ‰Šú‰»ƒuƒƒbƒN
+	// åˆæœŸåŒ–ãƒ–ãƒ­ãƒƒã‚¯
 	//----------------------------------------------------------------<<
 	Manager::preset();
 
 	//---------------------------------------------------------------->>
-	// ƒ^ƒCƒgƒ‹•\¦
-	SetMainWindowText(std::format("{}  ƒ¿{:4.2f}", Title, Ver).c_str());
+	// ã‚¿ã‚¤ãƒˆãƒ«è¡¨ç¤º
+	SetMainWindowText(std::format("{}  Î±{:4.2f}", (const char*)Title, Ver).c_str());
 	while(!ProcessMessage())
 	{
-		// FPS§Œä.Œ»İƒJƒEƒ“ƒgæ“¾
+		// FPSåˆ¶å¾¡.ç¾åœ¨ã‚«ã‚¦ãƒ³ãƒˆå–å¾—
 		Count = GetNowHiPerformanceCount();
-		// ƒL[ƒ{[ƒh“ü—Íó‹µXV
+		// ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰å…¥åŠ›çŠ¶æ³æ›´æ–°
 		Keyboard::update();
 		Mouse::update();
-		// ˆ—ƒuƒƒbƒN
+		// å‡¦ç†ãƒ–ãƒ­ãƒƒã‚¯
 		//----------------------------------------------------------------<<
 		Manager::update();
 
-		// ƒXƒNƒŠ[ƒ“ƒVƒ‡ƒbƒg
+		// ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ã‚·ãƒ§ãƒƒãƒˆ
 		if(Keyboard::push(KEY_INPUT_F7))
 			SaveDrawScreen(0, 0, WindowSize.x, WindowSize.y, std::format("ScreenShot_{:%m%d%H%M%OS}.jpg", std::chrono::zoned_time{std::chrono::current_zone(), std::chrono::system_clock::now()}).c_str(), DX_IMAGESAVETYPE_JPEG);
 		if(Keyboard::push(KEY_INPUT_F9))
 			break;
 
 		//---------------------------------------------------------------->>
-		// ‰æ–ÊÁ‹
+		// ç”»é¢æ¶ˆå»
 		ClearDrawScreen();
 		clsDx();
-		// •`‰æƒuƒƒbƒN
+		// æç”»ãƒ–ãƒ­ãƒƒã‚¯
 		//----------------------------------------------------------------<<
 		Manager::draw();
+		DrawString(0, 0, "abcABC123", 0xffffffff);
+		DrawString(0, 30, (const char*)u8"ğŸ»ğŸ»ğŸ»ä¹¾æ¯ğŸ»ğŸ»ğŸ»", 0xffffffff);
 
 		//---------------------------------------------------------------->>
-		// ‰æ–Ê•\¦
+		// ç”»é¢è¡¨ç¤º
 		ScreenFlip();
-		// FPS§Œä.ƒEƒFƒCƒg’Ç‰Á
+		// FPSåˆ¶å¾¡.ã‚¦ã‚§ã‚¤ãƒˆè¿½åŠ 
 		while(GetNowHiPerformanceCount() - Count < WaitValue);
 	}
-	// I—¹ˆ—
+	// çµ‚äº†å‡¦ç†
 	SetMainWindowText("Process Quitting...");
 	DxLib_End();
 	return 0;

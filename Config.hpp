@@ -16,7 +16,7 @@ public:
 	static Point<int> WindowSize;
 	static int WindowColorBit;
 
-	static const char* Title;
+	static const char8_t* Title;
 	static const float Ver;
 
 	static int WINAPI Main(HINSTANCE, HINSTANCE, LPSTR, int);

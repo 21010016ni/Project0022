@@ -1,20 +1,31 @@
 #pragma once
+#include <memory>
 #include <string>
 #include <deque>
 #include <map>
-#include <unordered_map>
 #include "Display.hpp"
 
 #pragma warning(disable:26812)
 
+unsigned int color(const std::u8string& u8);
+std::u8string color(unsigned int value);
+
 class Log
 {
+public:
     struct Text
     {
-        unsigned int tag;
-        std::string value;
-        Text(unsigned int tag, const char* data) :tag(tag), value(data) {}
+        std::shared_ptr<std::pair<unsigned int,std::u8string>> value;
+        Text() :value() {}
+        Text(unsigned int tag, const char8_t* data) :value(new std::pair<unsigned int, std::u8string>{ tag,std::u8string(data) }) {}
+        Text(unsigned int tag, const std::u8string& data) :value(new std::pair<unsigned int, std::u8string>{ tag,data }) {}
+        operator bool()const { return (bool)value; }
+        const unsigned int& tag()const { return value->first; }
+        const std::u8string& text()const { return value->second; }
+        bool HasSpeaker()const;
     };
+
+private:
     static Display display;
     static inline std::deque<Text> text;
 
@@ -25,6 +36,7 @@ public:
         system,
         talk,
         debug,
+        none,
     };
 
     static inline int maxNum = 128, drawNum = 32;
@@ -40,22 +52,29 @@ public:
     {
         display.SetFont(font);
     }
-    static void push(unsigned int tag, const char* data)
+    static void push(unsigned int tag, const char8_t* data)
     {
         text.emplace_front(tag, data);
         while (text.size() > maxNum)
             text.pop_back();
     }
-    static const std::string* latest(Tag type)
+    static void push(Text& data)
     {
+        text.emplace_front(data);
+        while (text.size() > maxNum)
+            text.pop_back();
+    }
+    static const Text& latest(Tag type)
+    {
+        static auto none = Text();
         for (const auto& i : text)
         {
-            if (i.tag == type)
+            if (i.tag() == type)
             {
-                return &i.value;
+                return i;
             }
         }
-        return nullptr;
+        return none;
     }
     static void draw(size_t start);
 };

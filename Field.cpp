@@ -29,7 +29,7 @@ void Field::update()
 			++alpha;
 
 			// 直前の会話を取得
-			auto prev = Log::latest(Log::talk);
+			auto& prev = Log::latest(Log::talk);
 
 			// 戦闘開始のやつ
 			if (!std::uniform_int_distribution{ 0,19 }(engine))
@@ -39,9 +39,9 @@ void Field::update()
 				// キャラクターが存在していたら先頭開始時の台詞を探し、存在したらそれを発言
 				if (!wu.expired())
 				{
-					auto word = wu.lock()->base->GetWord(Charactor::battle_start, (prev != nullptr) ? *prev : "");
-					if (word != nullptr)
-						Log::push(Log::talk, word->c_str());
+					auto word = wu.lock()->base->GetWord(Charactor::battle_start, prev);
+					if (word)
+						Log::push(word);
 				}
 				battle.reset(new Battle);
 				for (auto& i : unit)
@@ -59,28 +59,28 @@ void Field::update()
 				size_t cpos;
 
 				// もし直前の会話に自分以外の色が含まれていたら、話しかけとして処理する
-				if (prev != nullptr && (cpos = prev->find_first_of('#', 1)) != std::string::npos)
+				if (prev && (cpos = prev.text().find_first_of('#', 1)) != std::u8string::npos)
 				{
 					// 対象を取得する
-					auto wu = get(GetMode::now_in, std::stoi(prev->substr(cpos + 1, 6), nullptr, 16));
+					auto wu = get(GetMode::now_in, color(prev.text().substr(cpos, 7)));
 					// 対象が存在していたら進む、そうでないなら終了
 					if (!wu.expired())
 					{
 						// 対象の台詞を取得
-						auto word = wu.lock()->base->GetWord(Charactor::reaction + std::stoi(prev->substr(1, 6), nullptr, 16), *prev);
+						auto word = wu.lock()->base->GetWord(Charactor::reaction + color(prev.text().substr(0, 7)), prev);
 						// もし対応する台詞があれば、それを発言して会話済みフラグを立てる
-						if (word != nullptr)
+						if (word)
 						{
-							Log::push(Log::talk, word->c_str());
+							Log::push(word);
 							talked = true;
 						}
 						// 対応する台詞が存在しなければ万能リアクションを取得、それも無いなら発言者を別のキャラクターに変える（通常発言）
 						else
 						{
-							word = wu.lock()->base->GetWord(Charactor::reaction_any, *prev);
-							if (word != nullptr)
+							word = wu.lock()->base->GetWord(Charactor::reaction_any, prev);
+							if (word)
 							{
-								Log::push(Log::talk, word->c_str());
+								Log::push(word);
 								talked = true;
 							}
 						}
@@ -93,9 +93,9 @@ void Field::update()
 					// キャラクターが存在していたら探索時の台詞を探し、存在したらそれを発言
 					if (!unit.expired())
 					{
-						auto word = unit.lock()->base->GetWord(Charactor::search, (prev != nullptr) ? *prev : "");
-						if (word != nullptr)
-							Log::push(Log::talk, word->c_str());
+						auto word = unit.lock()->base->GetWord(Charactor::search, prev);
+						if (word)
+							Log::push(word);
 					}
 				}
 			}

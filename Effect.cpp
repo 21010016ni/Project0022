@@ -46,7 +46,7 @@ void Effect::Inst::play()const
 	}
 }
 
-void Effect::load(const std::string& FileName)
+void Effect::load(const std::u8string& FileName)
 {
 
 }

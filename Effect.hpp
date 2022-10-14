@@ -48,7 +48,7 @@ private:
 public:
 	static inline unsigned char volume = 255;
 
-	static void load(const std::string& FileName);
+	static void load(const std::u8string& FileName);
 	static void load(int graph, int wn, int hn, int se);
 
 	static void set(int id, int x, int y, Pos pos);

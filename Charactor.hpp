@@ -24,22 +24,22 @@ public:
 		reaction = 0xff000000,
 	};
 
-	std::string name;
+	std::u8string name;
 	Status status;
 	std::vector<Skill> skill;
-	std::multimap<unsigned int, std::string> word;
+	std::multimap<unsigned int, std::u8string> word;
 	struct Graph
 	{
-		std::string prof;
-		std::string icon;
+		std::u8string prof;
+		std::u8string icon;
 	} graph;
 
-	Charactor(const char* name, int color, int hp, int atk, int def, int mag, int reg, int spd, float tec, float luc)
+	Charactor(const char8_t* name, int color, int hp, int atk, int def, int mag, int reg, int spd, float tec, float luc)
 		:name(name), status(color, hp, atk, def, mag, reg, spd, tec, luc)
 	{
 	}
 
-	const std::string* GetWord(unsigned int key, const std::string& prev, bool speaker = true)const;
+	const Log::Text GetWord(unsigned int key, const Log::Text& prev, bool speaker = true)const;
 };
 
 class Unit
