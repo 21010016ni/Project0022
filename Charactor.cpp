@@ -170,17 +170,112 @@ const Log::Text Charactor::GetWord(unsigned int key, const Log::Text& prev, bool
 
 Charactor Charactor::load(const char* FileName)
 {
-	std::ifstream ifs(FileName, std::ios::in | std::ios::binary);
+	std::ifstream ifs(FileName, std::ios::binary);
 	if (!ifs.is_open())
 		throw std::invalid_argument("faiilure open file");
+
+	// バッファ作成
+	unsigned char length = 0;
+	unsigned char size = 0;
+	std::u8string sbuf;
+	Status status;
+	int ibuf0 = 0;
+	int ibuf1 = 0;
+
+	// データを読み込む
+
+	// 名前(可変長)
+	ifs.read(reinterpret_cast<char*>(&length), 1);
+	sbuf.resize(length);
+	ifs.read(reinterpret_cast<char*>(sbuf.data()), length);
+
+	// ステータス
+	ifs.read(reinterpret_cast<char*>(&status.color), 3);
+	ifs.read(reinterpret_cast<char*>(&status.hp), 4);
+	ifs.read(reinterpret_cast<char*>(&status.atk), 4);
+	ifs.read(reinterpret_cast<char*>(&status.def), 4);
+	ifs.read(reinterpret_cast<char*>(&status.mag), 4);
+	ifs.read(reinterpret_cast<char*>(&status.reg), 4);
+	ifs.read(reinterpret_cast<char*>(&status.spd), 4);
+	ifs.read(reinterpret_cast<char*>(&status.tec), 4);
+	ifs.read(reinterpret_cast<char*>(&status.luc), 4);
+
+	// キャラクター作成
+	Charactor charactor(sbuf, status);
+
+	// スキル
+	ifs.read(reinterpret_cast<char*>(&size), 1);
+	for (unsigned char i = 0; i < size; ++i)
+	{
+		// スキルID
+		ifs.read(reinterpret_cast<char*>(&ibuf0), 4);
+		// エフェクトID
+		ifs.read(reinterpret_cast<char*>(&ibuf1), 4);
+		// スキル登録
+		charactor.skill.emplace_back(ibuf0, ibuf1);
+	}
+	// 台詞
+	ifs.read(reinterpret_cast<char*>(&size), 1);
+	for (unsigned char i = 0; i < size; ++i)
+	{
+		// 台詞キー
+		ifs.read(reinterpret_cast<char*>(&ibuf0), 4);
+		// 台詞内容
+		ifs.read(reinterpret_cast<char*>(&length), 1);
+		sbuf.resize(length);
+		ifs.read(reinterpret_cast<char*>(sbuf.data()), length);
+		// スキル登録
+		charactor.word.emplace(ibuf0, sbuf);
+	}
+	return charactor;
 }
 
-void Charactor::output(const std::string& Directory)
+void Charactor::out(const std::string& Directory)
 {
-	std::ofstream ofs(Directory + ext::convert(color(status.color).substr(1)), std::ios::out | std::ios::binary | std::ios::trunc);
+	std::ofstream ofs(Directory + ext::convert(color(status.color).substr(1)) + ".bin", std::ios::binary);
 	if (!ofs.is_open())
 		throw std::invalid_argument("faiilure create file");
 	
-	// ここにデータを書き込みする記述
+	unsigned char size = 0;	// 可変長・個数データの数をメモリに置いておくためのバッファ
+	// サイズについては、現状255バイト以上の名前・台詞・スキル個数なんて想定してないのでとりあえず現状これで
+	// ダメそうだったら拡張する
+
+	// データを書き込む
+
+	// 名前（可変長）
+	ofs.write(reinterpret_cast<const char*>(&(size = static_cast<unsigned char>(name.size()))), 1);
+	ofs.write(ext::tochar(name), name.size());
+
+	// ステータス
+	ofs.write(reinterpret_cast<const char*>(&status.color), 3);
+	ofs.write(reinterpret_cast<const char*>(&status.hp), 4);
+	ofs.write(reinterpret_cast<const char*>(&status.atk), 4);
+	ofs.write(reinterpret_cast<const char*>(&status.def), 4);
+	ofs.write(reinterpret_cast<const char*>(&status.mag), 4);
+	ofs.write(reinterpret_cast<const char*>(&status.reg), 4);
+	ofs.write(reinterpret_cast<const char*>(&status.spd), 4);
+	ofs.write(reinterpret_cast<const char*>(&status.tec), 4);
+	ofs.write(reinterpret_cast<const char*>(&status.luc), 4);
+
+	// スキル(可変個数)
+	ofs.write(reinterpret_cast<const char*>(&(size = static_cast<unsigned char>(skill.size()))), 1);
+	for (const auto& i : skill)
+	{
+		// スキル番号
+		ofs.write(reinterpret_cast<const char*>(&i.first), 4);
+		// エフェクト番号
+		ofs.write(reinterpret_cast<const char*>(&i.second), 4);
+	}
+
+	// 台詞(可変個数)
+	ofs.write(reinterpret_cast<const char*>(&(size = static_cast<unsigned char>(word.size()))), 1);
+	for (const auto& i : word)
+	{
+		// キー(4)unsignd int
+		ofs.write(reinterpret_cast<const char*>(&i.first), 4);
+		// 台詞中身(可変長)
+		ofs.write(reinterpret_cast<const char*>(&(size = static_cast<unsigned char>(i.second.size()))), 1);
+		ofs.write(ext::tochar(i.second), i.second.size());
+	}
 }
 

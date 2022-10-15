@@ -28,32 +28,13 @@ void Manager::preset()
 	//BGM::set("data/bgm/自然.mp3");
 
 	// Charactor(name,color,hp,atk,def,mag,reg,spd,tec,luc)
-	charactor.emplace_back(u8"アルコン", 0xff0000ff, 300, 20, 10, 20, 0, 10, 0.8f, 0.5f);
-	charactor.back().skill.push_back(DataBase::skill[4]);
-	charactor.back().word.emplace(Charactor::search, u8"「#ffff00、あー……その、[体調はどうだ,腹減ってないか]」");
-	charactor.back().word.emplace(Charactor::reaction + 0xffff00, u8"「へいき|「いや、まあ……そんならいい」");
-	charactor.back().word.emplace(Charactor::reaction + 0xffff00, u8"健忘|「違わい！　いや、まあ……ならいいけど」");
-	charactor.back().word.emplace(Charactor::reaction + 0xffff00, u8"ステーキ|「こんなとこで無茶な……帰ったらな」");
-	charactor.back().word.emplace(Charactor::reaction_any, u8"元気|「まあ……ぼちぼちってとこか。サンキュ」");
-	charactor.back().word.emplace(Charactor::reaction_any, u8"？|「[あ、悪い……聞いてなかった,ちょっとわかんねえな……すまん]」");
-	charactor.back().word.emplace(Charactor::reaction_any, u8"「おっす」");
-	charactor.back().word.emplace(Charactor::battle_start, u8"「[さて、やるか,手早く終わらせるぞ]」");
-	charactor.back().word.emplace(Charactor::skill_prev, u8"「[あいよ,ほら、いくぞ,よっこらせ]」");
-	charactor.back().word.emplace(Charactor::skill_after, u8"「ま、こんなもん」");
-	charactor.emplace_back(u8"レプリカ", 0xffffff00, 300, 8, 0, 0, 0, 10, 0.8f, 0.5f);
-	charactor.back().skill.push_back(DataBase::skill[3]);
-	charactor.back().skill.push_back(DataBase::skill[1]);
-	charactor.back().word.emplace(Charactor::reaction + 0x0000ff, u8"体調はどう|「へいき。ありがと、#0000ff」");
-	charactor.back().word.emplace(Charactor::reaction + 0x0000ff, u8"腹減ってない|「[……？　さっきたべた。#0000ff、もう忘れた？　健忘？,おれ、ステーキが食べたい。用意して、#0000ff]」");
-	charactor.back().word.emplace(Charactor::reaction_any, u8"？|「[べつに……,しらない]」");
-	charactor.back().word.emplace(Charactor::reaction_any, u8"「[……なに。うるさい,はなすことないよ]」");
-	charactor.back().word.emplace(Charactor::battle_start, u8"「[……がるる,手、出していい？　……ちぇ]」");
-	charactor.emplace_back(u8"なんかつよい敵", 0xffff88ff, 800, 10, 0, 0, 0, 10, 0.2f, 1.4f);
-	charactor.back().skill.push_back(DataBase::skill[8]);
-	charactor.back().skill.push_back(DataBase::skill[9]);
-	charactor.back().word.emplace(Charactor::skill_prev, u8"「さて、始めよう」");
-	charactor.back().word.emplace(Charactor::skill_prev + 1, u8"「<c,0xff4444>……処刑<c>」");
-	charactor.back().word.emplace(Charactor::battle_start, u8"「[咎人よ、悔い改めよ,開始する]」");
+	//charactor.emplace_back(u8"キャラクター名", カラーコード, HP, ATK, DEF, MAG, REG, SPD, TEC, LUC);
+	//charactor.back().skill.emplace_back(スキルID, エフェクトID);
+	//charactor.back().word.emplace(台詞キー, u8"内容");
+
+	charactor.emplace_back(Charactor::load("data/charactor/0000ff.bin"));
+	charactor.emplace_back(Charactor::load("data/charactor/ffff00.bin"));
+	charactor.emplace_back(Charactor::load("data/charactor/ff88ff.bin"));
 
 	Field::set(charactor[0], Unit::Faction::player);
 	Field::set(charactor[1], Unit::Faction::player);
@@ -67,9 +48,9 @@ void Manager::preset()
 	Menu::root.back().emplace_back(0x624, u8"いろいろ");
 	Menu::root.emplace_back(0x5f4, u8"設定");
 	Menu::root.back().emplace_back(0x628, u8"ログ表示");
+	Menu::root.back().back().emplace_back(0x320, u8"会話", [](int, Menu::Item& i) { Log::mute[Log::Tag::talk] ^= true; if (Log::mute[Log::Tag::talk]) { i.icon = 0x32a; } else { i.icon = 0x320; } });
 	Menu::root.back().back().emplace_back(0x320, u8"戦闘", [](int, Menu::Item& i) { Log::mute[Log::Tag::battle] ^= true; if(Log::mute[Log::Tag::battle]) { i.icon = 0x32a; } else { i.icon = 0x320; } });
 	Menu::root.back().back().emplace_back(0x320, u8"システム", [](int, Menu::Item& i) { Log::mute[Log::Tag::system] ^= true; if(Log::mute[Log::Tag::system]) { i.icon = 0x32a; } else { i.icon = 0x320; } });
-	Menu::root.back().back().emplace_back(0x320, u8"会話", [](int, Menu::Item& i) { Log::mute[Log::Tag::talk] ^= true; if(Log::mute[Log::Tag::talk]) { i.icon = 0x32a; } else { i.icon = 0x320; } });
 	Menu::root.back().back().emplace_back(0x320, u8"デバッグ", [](int, Menu::Item& i) { Log::mute[Log::Tag::debug] ^= true; if(Log::mute[Log::Tag::debug]) { i.icon = 0x32a; } else { i.icon = 0x320; } });
 	Menu::root.back().emplace_back(0x629, u8"自動セーブ");
 

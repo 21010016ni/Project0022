@@ -24,10 +24,11 @@ public:
 		:color(color), hp(hp), atk(atk),def(def),mag(mag),reg(reg),spd(spd),tec(tec),luc(luc)
 	{
 	}
-
-	int hp;
+	Status() :color(-1), hp(0), atk(0), def(0), mag(0), reg(0), spd(0), tec(0), luc(0) {}
 
 	int color;
+
+	int hp;
 
 	/// <summary>
 	/// •¨—UŒ‚—Í

@@ -4,10 +4,10 @@
 
 namespace GetMode
 {
-	unsigned char ex = 0x01;
-	unsigned char in = 0x03;
-	unsigned char base = 0x00;
-	unsigned char now = 0x04;
+	inline unsigned char ex = 0x01;
+	inline unsigned char in = 0x03;
+	inline unsigned char base = 0x00;
+	inline unsigned char now = 0x04;
 }
 
 class Field

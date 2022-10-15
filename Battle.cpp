@@ -4,6 +4,7 @@
 #include <format>
 #include "Log.hpp"
 #include "Canvas.hpp"
+#include "DataBase.hpp"
 #include "convert_string.hpp"
 
 std::mt19937 random(std::random_device{}());
@@ -23,7 +24,9 @@ std::vector<std::weak_ptr<Unit>>& Battle::ShuffledUnit()
 
 void Battle::update()
 {
+	// ターン数（仮）
 	static int turn = 0;
+
 	Log::push(Log::Tag::battle, (ext::convert(std::format("{}", ++turn)) + u8"ターン目").c_str());
 	target.clear();
 	auto move = ShuffledUnit();
@@ -55,7 +58,12 @@ void Battle::update()
 		{
 			buf->cool = 0;
 			Log::push(Log::Tag::battle, (ext::convert(std::format("{}", ext::convert(buf->base->name))) + u8"の行動").c_str());
+
+			// エフェクトリスト
+			std::vector<int> effects;
+			// スキル発動数（なんかわけわからんスキル作ったりして変なことになった時も強制的に255回スキル発動したら終了）
 			unsigned char n = 0;
+
 			for(unsigned int j = 0; j < buf->base->skill.size() && n < 255; ++n)
 			{
 				// スキル前発言
@@ -66,15 +74,26 @@ void Battle::update()
 					Log::push(word);
 
 				// スキル発動
-				Log::push(Log::Tag::battle, (u8"《" + ext::convert(std::format("{}", ext::convert(buf->base->skill[j].Name()))) + u8"》！").c_str());
-				buf->cool += buf->base->skill[j](*buf, *this, j);
+				Log::push(Log::Tag::battle, (u8"《" + ext::convert(std::format("{}", ext::convert(DataBase::skill[buf->base->skill[num].first].Name()))) + u8"》！").c_str());
+				buf->cool += DataBase::skill[buf->base->skill[num].first](*buf, *this, j);
+				// エフェクト登録
+				if (buf->base->skill[num].second != -1)
+					effects.emplace_back(buf->base->skill[num].second);
 
 				// スキル後発言
 				word = buf->base->GetWord(Charactor::skill_after + num, pw);
 				if(word)
 					Log::push(word);
 			}
-			Canvas::PlayEffect(0);
+			// エフェクト再生（使用したスキルの中からランダム）
+			if (effects.size() > 0)
+			{
+				auto it = effects.begin();
+				std::advance(it, std::uniform_int_distribution<size_t>{0, effects.size() - 1}(random));
+				Canvas::PlayEffect(*it);
+			}
+
+			// 行動終了文字出力
 			Log::push(Log::Tag::battle, (ext::convert(std::format("{}", (int)n)) + u8"回行動した　" + ext::convert(std::format("CT{}", buf->cool))).c_str());
 		}
 	}

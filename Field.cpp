@@ -127,7 +127,7 @@ std::weak_ptr<Unit> Field::get(unsigned char mode, int color)
 				c &= i.lock()->value.color;
 			else
 				c &= i.lock()->base->status.color;
-			if ((c == (color & 0x00ffffff)) == (mode & 2))
+			if ((c == (color & 0x00ffffff)) == bool(mode & 2))
 				return i;
 		}
 		else

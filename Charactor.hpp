@@ -26,7 +26,7 @@ public:
 
 	std::u8string name;
 	Status status;
-	std::vector<Skill> skill;
+	std::vector<std::pair<int, int>> skill;	// スキル番号,エフェクト番号
 	std::multimap<unsigned int, std::u8string> word;
 	//struct Graph
 	//{
@@ -38,11 +38,14 @@ public:
 		:name(name), status(color, hp, atk, def, mag, reg, spd, tec, luc)
 	{
 	}
+	Charactor(const std::u8string& name, const Status& status) :name(name), status(status)
+	{
+	}
 
 	const Log::Text GetWord(unsigned int key, const Log::Text& prev, bool speaker = true)const;
 
 	static Charactor load(const char* FileName);
-	void output(const std::string& Directory);
+	void out(const std::string& Directory);
 };
 
 class Unit
