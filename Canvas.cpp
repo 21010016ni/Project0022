@@ -14,3 +14,8 @@ void Canvas::draw()
 	DrawGraph(display.pos.x, display.pos.y, back, TRUE);
 }
 
+bool Canvas::hit(const Point<int>& t)
+{
+	return display.hit(t);
+}
+

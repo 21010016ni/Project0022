@@ -25,8 +25,8 @@ public:
         bool HasSpeaker()const;
     };
 
-private:
     static Display display;
+private:
     static inline std::deque<Text> text;
 
 public:

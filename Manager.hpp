@@ -21,8 +21,6 @@ class Manager
 
 	static inline int BGMCount = 0;
 
-	static inline std::vector<Charactor> charactor;
-
 public:
 	static inline int textline = 0;
 

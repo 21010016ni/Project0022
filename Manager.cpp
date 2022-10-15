@@ -9,6 +9,7 @@
 #include "Input.hpp"
 #include "Effect.hpp"
 #include "Canvas.hpp"
+#include "Palette.hpp"
 #include "convert_string.hpp"
 
 void Manager::preset()
@@ -32,18 +33,18 @@ void Manager::preset()
 	//charactor.back().skill.emplace_back(スキルID, エフェクトID);
 	//charactor.back().word.emplace(台詞キー, u8"内容");
 
-	charactor.emplace_back(Charactor::load("data/charactor/0000ff.bin"));
-	charactor.emplace_back(Charactor::load("data/charactor/ffff00.bin"));
-	charactor.emplace_back(Charactor::load("data/charactor/ff88ff.bin"));
+	Palette::charactor.emplace_back(Charactor::load("data/charactor/0000ff.bin"));
+	Palette::charactor.emplace_back(Charactor::load("data/charactor/ffff00.bin"));
+	Palette::charactor.emplace_back(Charactor::load("data/charactor/ff88ff.bin"));
 
-	Field::set(charactor[0], Unit::Faction::player);
-	Field::set(charactor[1], Unit::Faction::player);
-	Field::set(charactor[2], Unit::Faction::enemy);
+	Field::set(Palette::charactor[0], Unit::Faction::player);
+	Field::set(Palette::charactor[1], Unit::Faction::player);
+	Field::set(Palette::charactor[2], Unit::Faction::enemy);
 
 	Menu::root.emplace_back(0x338, u8"戦闘進行", [](int, Menu::Item& i) { Field::pause ^= true; Field::CountReset(); if (Field::pause) { i.icon = 0x350; } else { i.icon = 0x338; } });
-	Menu::root.emplace_back(0x5e5, u8"操作");
-	Menu::root.back().emplace_back(0x621, u8"パレット云々");
-	Menu::root.back().emplace_back(0x621, u8"戦闘スピード");
+	Menu::root.emplace_back(0x37f, u8"戦闘スピード");
+	Menu::root.emplace_back(0x5f9, u8"パレット");
+	Menu::root.back().emplace_back(0, u8"");
 	Menu::root.emplace_back(0x5f7, u8"実績");
 	Menu::root.back().emplace_back(0x624, u8"いろいろ");
 	Menu::root.emplace_back(0x5f4, u8"設定");
@@ -84,6 +85,21 @@ void Manager::update()
 		if(Log::hit(Mouse::pos()))
 		{
 			textline = __max(__min(textline + Mouse::wheel(), Log::maxNum), 0);
+		}
+	}
+	if (Mouse::type() && Mouse::button(MOUSE_INPUT_2))
+	{
+		if (Menu::hit(Mouse::pos()))
+		{
+			Menu::display.pos = Mouse::pos() - Menu::display.siz / 2;
+		}
+		else if (Log::hit(Mouse::pos()))
+		{
+			Log::display.pos = Mouse::pos() - Log::display.siz / 2;
+		}
+		else if (Canvas::hit(Mouse::pos()))
+		{
+			Canvas::display.pos = Mouse::pos() - Canvas::display.siz / 2;
 		}
 	}
 
