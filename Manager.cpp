@@ -10,14 +10,14 @@
 #include "Effect.hpp"
 #include "Canvas.hpp"
 #include "Palette.hpp"
+#include "HandleManager.hpp"
 #include "convert_string.hpp"
 
 void Manager::preset()
 {
 	font = LoadFontDataToHandle((const char*)u8"data/font/NotoSansJPLight.dft");
 	Icon::load("data/picture/icon.png", 16);
-	Log::SetFont(font);
-	Menu::SetFont(font);
+	Display::SetFont(font);
 	Menu::SetSE(LoadSoundMem("data/se/select.mp3"), LoadSoundMem("data/se/decision.mp3"));
 	Canvas::back = LoadGraph("data/picture/back00.jpg");
 	ChangeFont("Noto Sans JP Light");
@@ -34,8 +34,11 @@ void Manager::preset()
 	//charactor.back().word.emplace(台詞キー, u8"内容");
 
 	Palette::charactor.emplace_back(Charactor::load("data/charactor/0000ff.bin"));
+	Palette::charactor.back().graph.icon = u8"data/charactor/robot_icon.png";
 	Palette::charactor.emplace_back(Charactor::load("data/charactor/ffff00.bin"));
+	Palette::charactor.back().graph.icon = u8"data/charactor/robot_icon.png";
 	Palette::charactor.emplace_back(Charactor::load("data/charactor/ff88ff.bin"));
+	Palette::charactor.back().graph.icon = u8"data/charactor/robot_icon.png";
 
 	Field::set(Palette::charactor[0], Unit::Faction::player);
 	Field::set(Palette::charactor[1], Unit::Faction::player);
@@ -43,8 +46,7 @@ void Manager::preset()
 
 	Menu::root.emplace_back(0x338, u8"戦闘進行", [](int, Menu::Item& i) { Field::pause ^= true; Field::CountReset(); if (Field::pause) { i.icon = 0x350; } else { i.icon = 0x338; } });
 	Menu::root.emplace_back(0x37f, u8"戦闘スピード");
-	Menu::root.emplace_back(0x5f9, u8"パレット");
-	Menu::root.back().emplace_back(0, u8"");
+	Menu::root.emplace_back(0x5f9, u8"パレット", [](int, Menu::Item&) {Palette::active ^= true; });
 	Menu::root.emplace_back(0x5f7, u8"実績");
 	Menu::root.back().emplace_back(0x624, u8"いろいろ");
 	Menu::root.emplace_back(0x5f4, u8"設定");
@@ -108,6 +110,8 @@ void Manager::update()
 	{
 		BGMCount = 600;
 	}
+	// ハンドル管理更新
+	HandleManager::update();
 }
 
 void Manager::draw()
@@ -115,17 +119,18 @@ void Manager::draw()
 	Canvas::draw();
 	Log::draw(textline);
 	Menu::draw(Mouse::pos());
+	Palette::draw(Mouse::pos());
 	Effect::play();
-	//int num = 4;
-	//for (int i = 0; i < num; ++i)
-	//{
-	//	DrawBox(414 + 30 * (i % 2), ((480 - num * 60) / (num + 1)) * (i + 1) + 60 * i, 414 + 60 + 30 * (i % 2), ((480 - num * 60) / (num + 1)) * (i + 1) + 60 * (i + 1), 0xffffffff, TRUE);
-	//}
-	//num = 5;
-	//for (int i = 0; i < num; ++i)
-	//{
-	//	DrawBox(904 + 30 * (i % 2), ((480 - num * 60) / (num + 1)) * (i + 1) + 60 * i, 904 + 60 + 30 * (i % 2), ((480 - num * 60) / (num + 1)) * (i + 1) + 60 * (i + 1), 0xffffffff, TRUE);
-	//}
+	int num = 4;
+	for (int i = 0; i < num; ++i)
+	{
+		DrawBox(414 + 30 * (i % 2), ((480 - num * 60) / (num + 1)) * (i + 1) + 60 * i, 414 + 60 + 30 * (i % 2), ((480 - num * 60) / (num + 1)) * (i + 1) + 60 * (i + 1), 0xffffffff, TRUE);
+	}
+	num = 5;
+	for (int i = 0; i < num; ++i)
+	{
+		DrawBox(904 + 30 * (i % 2), ((480 - num * 60) / (num + 1)) * (i + 1) + 60 * i, 904 + 60 + 30 * (i % 2), ((480 - num * 60) / (num + 1)) * (i + 1) + 60 * (i + 1), 0xffffffff, TRUE);
+	}
 	if(BGMCount > 0)
 	{
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, BGMCount);

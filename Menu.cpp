@@ -1,7 +1,7 @@
 #include "Menu.hpp"
 #include "convert_string.hpp"
 
-Display Menu::display({480,384}, {120,240});
+Display Menu::display({480,0}, {120,240});
 
 Point<int> Menu::itemSize(24, 24);
 Menu::Item Menu::root(-1, u8"");

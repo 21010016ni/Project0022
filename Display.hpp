@@ -3,11 +3,20 @@
 #include <string>
 #include "Point.hpp"
 
+enum Ref :unsigned char
+{
+	left = 0b00000000,
+	center = 0b00000001,
+	right = 0b00000010,
+	top = 0b00000000,
+	middle = 0b00000100,
+	under = 0b00001000,
+};
+
 class Display
 {
-	int font;
-
-	int fontSize;
+	static inline int font = -1;
+	static inline int fontSize = 0;
 
 public:
 	Point<int> pos;
@@ -16,12 +25,12 @@ public:
 	Display(const Point<int>& pos, const Point<int>& siz);
 	Display(const Point<int>& pos, const Point<int>& siz, int font);
 
-	void SetFont(int fontHandle)
+	static void SetFont(int fontHandle)
 	{
 		font = fontHandle;
 		GetFontStateToHandle(0, &fontSize, 0, font);
 	}
-	const int GetFontSize()const
+	static const int GetFontSize()
 	{
 		return fontSize;
 	}
@@ -67,9 +76,7 @@ public:
 	void DrawString(int x, int y, const std::u8string& text, unsigned int color)const;
 	void DrawString(const Point<int>& dst, const std::u8string& text, unsigned int color, int font)const;
 	void DrawString(int x, int y, const std::u8string& text, unsigned int color, int font)const;
-	void DrawRawString(const Point<int>& dst, const std::u8string& text, unsigned int color)const;
-	void DrawRawString(int x, int y, const std::u8string& text, unsigned int color)const;
-	void DrawRawString(const Point<int>& dst, const std::u8string& text, unsigned int color, int font)const;
-	void DrawRawString(int x, int y, const std::u8string& text, unsigned int color, int font)const;
+	void DrawRawString(const Point<int>& dst, const std::u8string& text, unsigned int color, unsigned char ref = 0)const;
+	void DrawRawString(int x, int y, const std::u8string& text, unsigned int color, unsigned char ref = 0)const;
 };
 

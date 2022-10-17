@@ -3,10 +3,10 @@
 #include "Icon.hpp"
 #include "convert_string.hpp"
 
-Display::Display(const Point<int>& pos, const Point<int>& siz) :pos(pos), siz(siz), font(-1), fontSize(0)
+Display::Display(const Point<int>& pos, const Point<int>& siz) :pos(pos), siz(siz)
 {
 }
-Display::Display(const Point<int>& pos, const Point<int>& siz, int font) :pos(pos), siz(siz), font(font)
+Display::Display(const Point<int>& pos, const Point<int>& siz, int font) :pos(pos), siz(siz)
 {
 	GetFontStateToHandle(0, &fontSize, 0, font);
 }
@@ -86,8 +86,8 @@ void Display::DrawString(const Point<int>& dst, const std::u8string& text, unsig
 		}
 		else if (text[tp] == '#')
 		{
-			DxLib::DrawCircle(textCursor.x + (fontSize - 4) / 2 + 1, textCursor.y + (fontSize - 4) / 2 + 1, (fontSize - 4) / 2, std::stoi(ext::convert(text.substr(tp + 1, 6)), nullptr, 16));
-			DxLib::DrawCircle(textCursor.x + (fontSize - 4) / 2 + 1, textCursor.y + (fontSize - 4) / 2 + 1, (fontSize - 4) / 2, 0xff888888, FALSE);
+			DxLib::DrawCircle(textCursor.x + fontSize / 2 - 1, textCursor.y + (fontSize + 2) / 2, fontSize / 2 - 1, std::stoi(ext::convert(text.substr(tp + 1, 6)), nullptr, 16));
+			DxLib::DrawCircle(textCursor.x + fontSize / 2 - 1, textCursor.y + (fontSize + 2) / 2, fontSize / 2 - 1, 0xff888888, FALSE);
 			tp += 7;
 			textCursor.x += fontSize;
 		}
@@ -108,20 +108,25 @@ void Display::DrawString(const Point<int>& dst, const std::u8string& text, unsig
 	}
 }
 
-void Display::DrawRawString(const Point<int>& dst, const std::u8string& text, unsigned int color) const
+void Display::DrawRawString(const Point<int>& dst, const std::u8string& text, unsigned int color, unsigned char ref) const
 {
-	DxLib::DrawStringToHandle(pos.x + dst.x, pos.y + dst.y, ext::tochar(text), color, font);
+	DrawRawString(dst.x, dst.y, text, color, ref);
 }
-void Display::DrawRawString(int x, int y, const std::u8string& text, unsigned int color) const
+void Display::DrawRawString(int x, int y, const std::u8string& text, unsigned int color, unsigned char ref) const
 {
-	DxLib::DrawStringToHandle(pos.x + x, pos.y + y, ext::tochar(text), color, font);
-}
-void Display::DrawRawString(const Point<int>& dst, const std::u8string& text, unsigned int color, int font) const
-{
-	DxLib::DrawStringToHandle(pos.x + dst.x, pos.y + dst.y, ext::tochar(text), color, font);
-}
-void Display::DrawRawString(int x, int y, const std::u8string& text, unsigned int color, int font) const
-{
-	DxLib::DrawStringToHandle(pos.x + x, pos.y + y, ext::tochar(text), color, font);
+	int rx = 0, ry = 0;
+	if (ref & 0b00000011)
+	{
+		rx = GetDrawStringWidthToHandle(ext::tochar(text), text.size(), font);
+		if (ref & 0b00000001)
+			rx /= 2;
+	}
+	if (ref & 0b00001100)
+	{
+		ry = fontSize;
+		if (ref & 0b00000100)
+			ry /= 2;
+	}
+	DxLib::DrawStringToHandle(pos.x + x - rx, pos.y + y - ry, ext::tochar(text), color, font);
 }
 

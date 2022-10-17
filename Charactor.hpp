@@ -28,11 +28,11 @@ public:
 	Status status;
 	std::vector<std::pair<int, int>> skill;	// スキル番号,エフェクト番号
 	std::multimap<unsigned int, std::u8string> word;
-	//struct Graph
-	//{
-	//	std::u8string prof;
-	//	std::u8string icon;
-	//} graph;
+	struct Graph
+	{
+		std::u8string prof;
+		std::u8string icon;
+	} graph;
 
 	Charactor(const char8_t* name, int color, int hp, int atk, int def, int mag, int reg, int spd, float tec, float luc)
 		:name(name), status(color, hp, atk, def, mag, reg, spd, tec, luc)

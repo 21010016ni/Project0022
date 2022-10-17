@@ -2,7 +2,7 @@
 #include <DxLib.h>
 #include "Effect.hpp"
 
-Display Canvas::display({0,384}, {480,640});
+Display Canvas::display({0,0}, {480,640});
 
 void Canvas::PlayEffect(int id)
 {

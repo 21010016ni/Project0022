@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include "convert_string.hpp"
 
-Display Log::display({0,400}, {600,300});
+Display Log::display({0,640}, {600,384});
 int Log::maxNum = 200;
 int Log::drawNum = 48;
 

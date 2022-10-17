@@ -66,11 +66,6 @@ public:
 	{
 		return display.hit(t);
 	}
-	
-	static void SetFont(int font)
-	{
-		display.SetFont(font);
-	}
 	static void SetSE(int select, int decision)
 	{
 		se[0] = select;

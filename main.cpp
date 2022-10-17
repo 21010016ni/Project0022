@@ -30,11 +30,9 @@ int Application::Main(HINSTANCE, HINSTANCE, LPSTR, int)
 	//----------------------------------------------------------------<<
 	Manager::preset();
 
-	std::u8string u8s = u8"🍻🍻🍻乾杯🍻🍻🍻";
-
 	//---------------------------------------------------------------->>
 	// タイトル表示
-	SetMainWindowText(std::format("{}  α{:4.2f}", (const char*)Title, Ver).c_str());
+	SetMainWindowText(std::format("{} {:4.2f}", (const char*)Title, Ver).c_str());
 	while(!ProcessMessage())
 	{
 		// FPS制御.現在カウント取得
