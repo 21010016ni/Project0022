@@ -27,11 +27,11 @@ private:
 		constexpr int get()const noexcept { return handle; }
 		~Data();
 	};
-	static inline std::map<std::string, std::unique_ptr<Data>> handle;
+	static inline std::map<std::u8string, std::unique_ptr<Data>> handle;
 	static int value;
 
 public:
 	static void update();
-	static int get(const std::string& key, Type type = Type::undefined);
+	static int get(const std::u8string& key, Type type = Type::undefined);
 };
 

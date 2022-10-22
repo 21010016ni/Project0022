@@ -1,6 +1,6 @@
 #include "Field.hpp"
 #include <random>
-#include "Particle.hpp"
+#include "ParticleDust.hpp"
 
 extern std::mt19937 engine;
 

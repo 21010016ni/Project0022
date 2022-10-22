@@ -1,5 +1,6 @@
 #include "HandleManager.hpp"
 #include <DxLib.h>
+#include "convert_string.hpp"
 
 int HandleManager::value = 3600;
 
@@ -16,7 +17,7 @@ void HandleManager::update()
 	}
 }
 
-int HandleManager::get(const std::string& key, Type type)
+int HandleManager::get(const std::u8string& key, Type type)
 {
 	auto i = handle.find(key);
 	if (i == handle.cend())
@@ -27,10 +28,10 @@ int HandleManager::get(const std::string& key, Type type)
 			switch (type)
 			{
 			case Type::graph:
-				buf = LoadGraph(key.c_str());
+				buf = LoadGraph(ext::tochar(key));
 				break;
 			case Type::sound:
-				buf = LoadSoundMem(key.c_str());
+				buf = LoadSoundMem(ext::tochar(key));
 				break;
 			}
 			handle.emplace(key, new Data(type, buf, value));
