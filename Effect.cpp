@@ -1,7 +1,7 @@
 #include "Effect.hpp"
 #include <DxLib.h>
 
-Effect::Data::Data(int graph, int wn, int hn, int se, unsigned char volume) :graph(graph), num(hn, wn), se(se), volume(volume)
+Effect::Data::Data(int graph, int wn, int hn, int wait, int se, unsigned char volume) :graph(graph), num(hn, wn), wait(wait), se(se), volume(volume)
 {
 	GetGraphSize(graph, &size.x, &size.y);
 	size /= num;
@@ -9,6 +9,7 @@ Effect::Data::Data(int graph, int wn, int hn, int se, unsigned char volume) :gra
 
 void Effect::Data::draw(int x, int y, int t)const
 {
+	t /= wait;
 	DrawRectGraph(x, y, (t % num.x) * size.x, (t / num.x) * size.y, size.x, size.y, graph, TRUE);
 }
 
@@ -51,9 +52,9 @@ void Effect::load(const std::u8string& FileName)
 
 }
 
-void Effect::load(int graph, int wn, int hn, int se)
+void Effect::load(int graph, int wn, int hn, int wait, int se)
 {
-	data.emplace_back(graph, wn, hn, se, volume);
+	data.emplace_back(graph, wn, hn, wait, se, volume);
 }
 
 void Effect::set(int id, int x, int y, Pos pos)
@@ -71,7 +72,7 @@ void Effect::play()
 			i->data->volume = volume;
 		}
 		i->play();
-		if(++(i->time) >= i->data->size.y * i->data->size.x)
+		if (++(i->time) >= i->data->size.y * i->data->size.x * i->data->wait)
 		{
 			list.erase(i);
 			continue;

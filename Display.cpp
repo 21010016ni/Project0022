@@ -24,6 +24,15 @@ void Display::Shake::set(int l, int t, const Point<float>& d)
 	dir = d;
 	value = {0,0};
 }
+void Display::Shake::reset()
+{
+	count = 0;
+	level = 0;
+	time = 0;
+	power = 0.0f;
+	dir = { 0.0f,0.0f };
+	value = { 0,0 };
+}
 bool Display::Shake::update()
 {
 	if(time != 0 && count < time)
@@ -63,11 +72,44 @@ int Display::Shake::x(int l)const
 		return 0;
 }
 
-void Display::DrawIcon(const Point<int>& dst, int id)
+void Display::DrawGraph(const Point<int>& dst, int handle, bool TransFlag, unsigned char ref)const
+{
+	DrawGraph(dst.x, dst.y, handle, TransFlag, ref);
+}
+
+void Display::DrawGraph(int x, int y, int handle, bool TransFlag, unsigned char ref)const
+{
+	if (ref != 0)
+	{
+		int rx, ry;
+		GetGraphSize(handle, &rx, &ry);
+		if (ref & 0x01)
+		{
+			if (ref & 0x02)
+				rx /= 2;
+		}
+		else
+			rx = 0;
+		if (ref & 0x04)
+		{
+			if (ref & 0x08)
+				ry /= 2;
+		}
+		else
+			ry = 0;
+		DxLib::DrawGraph(pos.x + x - rx + shake.x(level), pos.y + y - ry + shake.y(level), handle, TransFlag);
+	}
+	else
+	{
+		DxLib::DrawGraph(pos.x + x + shake.x(level), pos.y + y + shake.y(level), handle, TransFlag);
+	}
+}
+
+void Display::DrawIcon(const Point<int>& dst, int id)const
 {
 	Icon::draw(pos + dst + shake.get(level), id);
 }
-void Display::DrawIcon(int x, int y, int id)
+void Display::DrawIcon(int x, int y, int id)const
 {
 	Icon::draw(pos.x + x + shake.x(level), pos.y + y + shake.y(level), id);
 }
@@ -167,17 +209,21 @@ void Display::DrawRawString(const Point<int>& dst, const std::u8string& text, un
 void Display::DrawRawString(int x, int y, const std::u8string& text, unsigned int color, unsigned char ref) const
 {
 	int rx = 0, ry = 0;
-	if (ref & 0b00000011)
+	if (ref & 0x01)
 	{
 		rx = GetDrawStringWidthToHandle(ext::tochar(text), (int)text.size(), font);
-		if (ref & 0b00000001)
+		if (ref & 0x02)
+		{
 			rx /= 2;
+		}
 	}
-	if (ref & 0b00001100)
+	if (ref & 0x04)
 	{
 		ry = fontSize;
-		if (ref & 0b00000100)
+		if (ref & 0x08)
+		{
 			ry /= 2;
+		}
 	}
 	DxLib::DrawStringToHandle(pos.x + x - rx + shake.x(level), pos.y + y - ry + shake.y(level), ext::tochar(text), color, font);
 }

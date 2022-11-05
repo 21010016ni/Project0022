@@ -160,6 +160,7 @@
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Palette.cpp" />
     <ClCompile Include="Particle.cpp" />
+    <ClCompile Include="ParticleSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Battle.hpp" />
@@ -180,7 +181,7 @@
     <ClInclude Include="Menu.hpp" />
     <ClInclude Include="Palette.hpp" />
     <ClInclude Include="Particle.hpp" />
-    <ClInclude Include="ParticleDust.hpp" />
+    <ClInclude Include="ParticleSystem.hpp" />
     <ClInclude Include="Point.hpp" />
     <ClInclude Include="Skill.hpp" />
     <ClInclude Include="State.hpp" />

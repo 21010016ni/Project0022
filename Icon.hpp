@@ -23,11 +23,13 @@ public:
 
 	static void draw(const Point<int>& dst, int num)
 	{
-		DrawRectGraph(dst.x, dst.y, (num % ln) * siz, (num / ln) * siz, siz, siz, graph, TRUE);
+		if(num != -1)
+			DrawRectGraph(dst.x, dst.y, (num % ln) * siz, (num / ln) * siz, siz, siz, graph, TRUE);
 	}
 	static void draw(int x, int y, int num)
 	{
-		DrawRectGraph(x, y, (num % ln) * siz, (num / ln) * siz, siz, siz, graph, TRUE);
+		if(num != -1)
+			DrawRectGraph(x, y, (num % ln) * siz, (num / ln) * siz, siz, siz, graph, TRUE);
 	}
 	static int get_size()
 	{

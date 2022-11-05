@@ -22,10 +22,11 @@ private:
 		int graph;
 		Point<int> size;
 		Point<int> num;
+		int wait;
 		int se;
 		mutable unsigned char volume;
 
-		Data(int graph, int wn, int hn, int se, unsigned char volume);
+		Data(int graph, int wn, int hn, int wait, int se, unsigned char volume);
 
 		void draw(int x, int y, int t)const;
 		void play()const;
@@ -49,7 +50,7 @@ public:
 	static inline unsigned char volume = 255;
 
 	static void load(const std::u8string& FileName);
-	static void load(int graph, int wn, int hn, int se);
+	static void load(int graph, int wn, int hn, int wait, int se);
 
 	static void set(int id, int x, int y, Pos pos);
 	static void play();

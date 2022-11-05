@@ -7,31 +7,46 @@ class Keyboard
 	Keyboard() = delete;
 
 protected:
-	static inline struct
+	struct Value
 	{
-		unsigned char v = 0;
-		void operator<<(char n)noexcept { (v <<= 1) += n; }
-		explicit operator unsigned char& ()noexcept { return v; }
+		BYTE v = 0;
+		void operator<<(BYTE n)noexcept { (v <<= 1) += n; }
+		explicit operator BYTE& ()noexcept { return v; }
 		bool press()const noexcept { return v & 1; }
 		bool push()const noexcept { return (v & 3) == 1; }
 		bool pull()const noexcept { return (v & 3) == 2; }
-	} value[256];
+	};
+	static inline Value value[256];
 
 public:
 	static void update()noexcept
 	{
-		static char key[256] = { 0 };
-		static unsigned char i = 0;
-		GetHitKeyStateAll(key);
+		static BYTE key[256] = {0};
+		static BYTE i = 0;
+		(void)GetKeyboardState(key);
 		do
-			value[i] << key[i];
+			value[i] << bool(key[i] & 0x80);
 		while (++i != 0);
 	}
 
-	static unsigned char& get(unsigned char code)noexcept { return (unsigned char&)value[code]; }
-	static bool press(unsigned char code)noexcept { return value[code].press(); }
-	static bool push(unsigned char code)noexcept { return value[code].push(); }
-	static bool pull(unsigned char code)noexcept { return value[code].pull(); }
+	static BYTE& get(BYTE code)noexcept { return (BYTE&)value[code]; }
+	static bool press(BYTE code)noexcept { return value[code].press(); }
+	static bool push(BYTE code)noexcept { return value[code].push(); }
+	static bool pull(BYTE code)noexcept { return value[code].pull(); }
+	static bool press()
+	{
+		for (BYTE i = 0; i < 240; ++i)
+			if (press(i))
+				return true;
+		return false;
+	}
+	static bool push()
+	{
+		for (BYTE i = 0; i < 240; ++i)
+			if (push(i))
+				return true;
+		return false;
+	}
 };
 
 class Mouse
