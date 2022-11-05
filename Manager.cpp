@@ -21,12 +21,12 @@ void Manager::preset()
 	Menu::SetSE(LoadSoundMem("data/se/select.mp3"), LoadSoundMem("data/se/decision.mp3"));
 	Canvas::back = LoadGraph("data/picture/back00.jpg");
 	ChangeFont("Noto Sans JP Light");
-	//BGM::set("data/bgm/Changeling.mp3");
-	//BGM::set("data/bgm/Etude.mp3");
-	//BGM::set("data/bgm/なんだか明るい感じのワルツ.wav");
-	//BGM::set("data/bgm/夢.mp3");
-	//BGM::set("data/bgm/宝石と想いを胸に.mp3");
-	//BGM::set("data/bgm/自然.mp3");
+	//BGM::set(u8"data/bgm/Changeling.mp3");
+	//BGM::set(u8"data/bgm/Etude.mp3");
+	//BGM::set(u8"data/bgm/なんだか明るい感じのワルツ.wav");
+	//BGM::set(u8"data/bgm/夢.mp3");
+	//BGM::set(u8"data/bgm/宝石と想いを胸に.mp3");
+	//BGM::set(u8"data/bgm/自然.mp3");
 
 	// Charactor(name,color,hp,atk,def,mag,reg,spd,tec,luc)
 	//charactor.emplace_back(u8"キャラクター名", カラーコード, HP, ATK, DEF, MAG, REG, SPD, TEC, LUC);
@@ -87,21 +87,6 @@ void Manager::update()
 		if(Log::hit(Mouse::pos()))
 		{
 			textline = __max(__min(textline + Mouse::wheel(), Log::maxNum), 0);
-		}
-	}
-	if (Mouse::type() && Mouse::button(MOUSE_INPUT_2))
-	{
-		if (Menu::hit(Mouse::pos()))
-		{
-			Menu::display.pos = Mouse::pos() - Menu::display.siz / 2;
-		}
-		else if (Log::hit(Mouse::pos()))
-		{
-			Log::display.pos = Mouse::pos() - Log::display.siz / 2;
-		}
-		else if (Canvas::hit(Mouse::pos()))
-		{
-			Canvas::display.pos = Mouse::pos() - Canvas::display.siz / 2;
 		}
 	}
 

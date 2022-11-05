@@ -3,9 +3,9 @@
 
 class Canvas
 {
+	static Display display;
 
 public:
-	static Display display;
 	static inline int back;
 
 	static void PlayEffect(int id);

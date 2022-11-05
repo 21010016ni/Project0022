@@ -50,8 +50,8 @@ public:
 		operator bool()const { return select != -1; }
 	};
 
-	static Display display;
 private:
+	static Display display;
 
 	static Point<int> itemSize;
 	static inline int se[2] = { -1,-1 };
